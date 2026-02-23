@@ -14,13 +14,13 @@ class IsCheck
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next): Response
+    public function handle(Request $request, Closure $next, string $role): Response
     {
-        if (!Auth::check()) {
-            // Not authenticated, redirect to login
-            return redirect()->route('login');
+        if (!Auth::check() || Auth::user()->role !== $role) {
+            // หากผู้ใช้ไม่ได้ล็อกอิน หรือ บทบาทไม่ตรงกับที่กำหนด ให้ทำ Redirect หรือ Abort
+            abort(403, 'Unauthorized action.'); // หรือ return redirect('/');
         }
-
+        
         return $next($request);
     }
 }

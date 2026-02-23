@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\Auth\LoginController;
 
 Route::get('/', function () {
     return view('auth.login');
@@ -10,9 +11,17 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/login', [LoginController::class, 'redirectTo'])->name('login');
 
-Route::middleware(['auth'])->controller(HomeController::class)->group(function () {
-    //Company home
-    Route::get('{id}/detail', 'detail')->name('detail');
-});
+Route::get('/home', function () {
+    $user = Auth::user()->role;
+
+    return match ($user) {
+        'admin'   => redirect()->route('admin.index'),
+        'user' => redirect()->route('user.index'),
+    };
+})->name('home');
+
+include __DIR__ . '/admin.php';
+include __DIR__ . '/user.php';
+
