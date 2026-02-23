@@ -16,7 +16,7 @@
                     <tr>
                         <td colspan="2" class="fw-bold">{{ $items->subject_category->category_name }}</td>
                         <td></td>
-                        <td>{{ $items->subject_category->credit_needed }}</td>
+                        <td class="fw-bold">{{ $items->subject_category->credit_needed }}</td>
                         <td></td>
                     </tr>
                     @foreach($items->subject_category->subject_type as $item)

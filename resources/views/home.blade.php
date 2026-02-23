@@ -9,8 +9,8 @@
                 <div class="card-body">
                     <h5 for="" class="form-label">รหัสนักศึกษา : {{Auth::user()->student_id}}</h5>
                     <h5 for="" class="form-label">ชื่อ : {{Auth::user()->student->student_name}}</h5>
-                    <h5 for="" class="form-label">หลักสูตร : {{Auth::user()->student->major_name}}</h5>
-                    <h5 for="" class="form-label">วิชาเอก : {{Auth::user()->student->submajor_name}}</h5>
+                    <h5 for="" class="form-label">หลักสูตร : {{Auth::user()->student->curriculum->program_name}}</h5>
+                    <h5 for="" class="form-label">วิชาเอก : {{Auth::user()->student->curriculum->curriculum_name}}</h5>
                 </div>
             </div>
             <div class="justify-content-center text-center">
