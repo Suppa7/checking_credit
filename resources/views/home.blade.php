@@ -11,6 +11,7 @@
                     <h5 for="" class="form-label">ชื่อ : {{Auth::user()->student->student_name}}</h5>
                     <h5 for="" class="form-label">หลักสูตร : {{Auth::user()->student->curriculum->program_name}}</h5>
                     <h5 for="" class="form-label">วิชาเอก : {{Auth::user()->student->curriculum->curriculum_name}}</h5>
+                    <h5 for="" class="form-label">ปีเล่มหลักสูตร : {{Auth::user()->student->curriculum->curriculum_year}}</h5>
                 </div>
             </div>
             <div class="justify-content-center text-center">
