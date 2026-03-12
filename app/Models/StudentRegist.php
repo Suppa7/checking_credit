@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class StudentRegist extends Model
 {
+    
     //
     public function subject()
     {

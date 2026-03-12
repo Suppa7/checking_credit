@@ -3,46 +3,55 @@
 @section('content')
 <style>
     body {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
         min-height: 100vh;
     }
     .glass-card {
         background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(10px);
+        backdrop-filter: blur(12px);
         border-radius: 20px;
-        border: 1px solid rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
     }
     /* ปรับแต่ง Table ให้ดูทันสมัย */
     .table {
         border-collapse: separate;
-        border-spacing: 0 8px;
+        border-spacing: 0 10px;
     }
     .table thead th {
         border: none;
-        background-color: #4834d4 !important;
+        background: linear-gradient(135deg, #2a5298, #1e3c72) !important;
         color: white;
-        padding: 15px;
-        font-weight: 500;
+        padding: 18px 15px;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.9rem;
+        letter-spacing: 0.5px;
     }
     .table tbody tr {
         background-color: white;
-        transition: transform 0.2s;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        transition: transform 0.2s, box-shadow 0.2s;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.03);
     }
     .table tbody tr:hover {
-        transform: scale(1.01);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 15px rgba(0,0,0,0.08);
     }
     .table td {
         vertical-align: middle;
-        padding: 15px;
+        padding: 18px 15px;
         border: none;
     }
     .category-row {
         background-color: #f8f9fa !important;
-        border-left: 5px solid #667eea !important;
+        border-left: 5px solid #2a5298 !important;
     }
     .progress {
-        height: 8px;
+        height: 10px;
+        border-radius: 10px;
+        background-color: #e9ecef;
+    }
+    .progress-bar {
         border-radius: 10px;
     }
 </style>

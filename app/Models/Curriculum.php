@@ -6,6 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Curriculum extends Model
 {
+    protected $fillable = [
+        'program_name',
+        'curriculum_name',
+        'curriculum_year'
+    ];
     //
     /**
      * 

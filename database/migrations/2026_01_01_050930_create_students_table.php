@@ -16,6 +16,8 @@ return new class extends Migration
             $table->foreignId('user_id');
             $table->string('student_name');
             $table->foreignId('curriculum_id');
+            $table->foreignId('major_id');
+            $table->foreignId('submajor_id')->nullable();
             $table->timestamps();
         });
     }

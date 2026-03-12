@@ -4,21 +4,35 @@
 <div class="container mt-3">
     <div class="row justify-content-center">
         <div class="col-md-8">
-            <h4 class="card-title fw-bold text-center">ตรวจสอบข้อมูล</h4>
-            <div class="card mt-3">
-                <div class="card-body">
-                    <h5 for="" class="form-label">รหัสนักศึกษา : {{Auth::user()->student_id}}</h5>
-                    <h5 for="" class="form-label">ชื่อ : {{Auth::user()->student->student_name}}</h5>
-                    <h5 for="" class="form-label">หลักสูตร : {{Auth::user()->student->curriculum->program_name}}</h5>
-                    <h5 for="" class="form-label">วิชาเอก : {{Auth::user()->student->curriculum->curriculum_name}}</h5>
-                    <h5 for="" class="form-label">ปีเล่มหลักสูตร : {{Auth::user()->student->curriculum->curriculum_year}}</h5>
+            <h4 class="card-title fw-bold text-center">เมนูจัดการข้อมูล (Menu)</h4>
+            
+            @if(session('success'))
+                <div class="alert alert-success mt-3">
+                    {{ session('success') }}
                 </div>
-            </div>
-            <div class="justify-content-center text-center">
-                <a href="{{ route('detail',['id'=> Auth::user()->id]) }}" class="btn btn-success mt-3">กดเพื่อเช็กหน่วยกิต</a>
+            @endif
+
+            <div class="card mt-3 shadow-sm">
+                <div class="card-body">
+                    <div class="d-grid gap-3 col-md-8 mx-auto py-4">
+                        <!-- เช็กหน่วยกิต -->
+                        <a href="{{ route('user.detail', ['id' => Auth::user()->id]) }}" class="btn btn-success btn-lg">
+                            <i class="bi bi-card-checklist"></i> เช็กหน่วยกิต (Check Credits)
+                        </a>
+                        
+                        <!-- เพิ่มวิชาที่ลงทะเบียน -->
+                        <a href="{{ route('user.add_subject') }}" class="btn btn-primary btn-lg">
+                            <i class="bi bi-journal-plus"></i> เพิ่มวิชาที่ลงทะเบียน (Add Registered Subject)
+                        </a>
+                        
+                        <!-- แก้ไขข้อมูลนักศึกษา -->
+                        <a href="{{ route('user.edit_student') }}" class="btn btn-warning btn-lg">
+                            <i class="bi bi-person-gear"></i> แก้ไขข้อมูลนักศึกษา (Edit Student Info)
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
 @endsection
-  

@@ -6,6 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class SubjectCategory extends Model
 {
+    protected $fillable = [
+        'category_name',
+        'credit_needed'
+    ];
     //
     public function subject_type()
     {

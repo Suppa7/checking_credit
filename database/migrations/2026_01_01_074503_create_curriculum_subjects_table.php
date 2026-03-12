@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('curriculum_subjects', function (Blueprint $table) {
             $table->id();
-            $table->string('curriculum_id');
+            $table->foreignId('curriculum_id');
             $table->foreignId('subject_category_id');
             $table->timestamps();
         });

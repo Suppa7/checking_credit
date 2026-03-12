@@ -1,40 +1,48 @@
 @extends('layouts.app')
 
 @section('content')
-    <style>
+<style>
     body {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
         min-height: 100vh;
         color: #fff;
     }
 
     .glass-card {
         background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(10px);
-        border: none;
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
         border-radius: 20px;
         box-shadow: 0 15px 35px rgba(0,0,0,0.2);
     }
 
     /* ปรับแต่งหัวตารางแยกตามสถานะ */
     .table-passed thead th {
-        background-color: #00b894 !important; /* เขียว */
+        background: linear-gradient(135deg, #00b09b, #96c93d) !important;
         color: white;
         border: none;
+        padding: 15px;
     }
 
     .table-unpassed thead th {
-        background-color: #fdcb6e !important; /* ส้ม/เหลือง */
-        color: #2d3436;
+        background: linear-gradient(135deg, #f6d365, #fda085) !important;
+        color: #fff;
         border: none;
+        padding: 15px;
     }
 
     .table tbody tr {
-        transition: 0.2s;
+        transition: all 0.2s ease;
     }
 
     .table tbody tr:hover {
-        background-color: rgba(102, 126, 234, 0.05);
+        background-color: rgba(42, 82, 152, 0.05);
+        transform: translateX(5px);
+    }
+    
+    .table td {
+        padding: 15px;
+        vertical-align: middle;
     }
 
     .badge-status {

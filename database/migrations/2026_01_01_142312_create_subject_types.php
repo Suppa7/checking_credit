@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('subject_types', function (Blueprint $table) {
             $table->id();
-            $table->string('subject_category_id');
+            $table->foreignId('subject_category_id');
             $table->integer('credit_needed');
             $table->string('type_name');
             $table->timestamps();
