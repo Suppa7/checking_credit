@@ -1,5 +1,11 @@
 @extends('layouts.app')
 
+@section('breadcrumb')
+    <li class="breadcrumb-item"><a href="{{ route('home') }}">หน้าแรก</a></li>
+    <li class="breadcrumb-item"><a href="{{ route('user.index') }}">ตรวจสอบผลการเรียนตามโครงสร้างหลักสูตร</a></li>
+    <li class="breadcrumb-item active" aria-current="page">เพิ่มวิชาที่ลงทะเบียน</li>
+@endsection
+
 @section('content')
 <style>
     body {

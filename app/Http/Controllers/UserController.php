@@ -15,19 +15,113 @@ class UserController extends Controller
 {
     public function index()
     {
-        return view('user.index');
+        $user = Auth::user();
+        $student = $user->student;
+        $curriculumTypes = collect();
+        
+        if ($student && $student->curriculum) {
+            $curriculumTypes = $student->curriculum->curriculum_type()
+                ->with(['curriculum_subject.subject_category'])
+                ->get();
+
+            // Get all passed subjects for this user with their credit info and category
+            $passedRegistrations = StudentRegist::where('user_id', $user->id)
+                ->where('status', 'Pass')
+                ->with('subject.subject_type')
+                ->get();
+
+            foreach ($curriculumTypes as $type) {
+                $totalNeeded = 0;
+                $totalEarned = 0;
+
+                foreach ($type->curriculum_subject as $curriculumSubject) {
+                    $category = $curriculumSubject->subject_category;
+                    if ($category) {
+                        $totalNeeded += $category->credit_needed;
+
+                        // Calculate earned credits for this category
+                        $categoryEarned = $passedRegistrations->filter(function ($reg) use ($category) {
+                            return $reg->subject && 
+                                   $reg->subject->subject_type && 
+                                   $reg->subject->subject_type->subject_category_id == $category->id;
+                        })->sum(function ($reg) {
+                            return $reg->subject->subject_credit;
+                        });
+
+                        // We shouldn't count more than needed for a category in the overall progress
+                        $totalEarned += min($categoryEarned, $category->credit_needed);
+                    }
+                }
+
+                $type->total_needed = $totalNeeded;
+                $type->total_earned = $totalEarned;
+                $type->progress_percentage = $totalNeeded > 0 ? min(100, round(($totalEarned / $totalNeeded) * 100)) : 0;
+            }
+        }
+        
+        return view('user.index', compact('curriculumTypes'));
     }
 
-    public function detail($id)
+
+    public function detail(Request $request, $id)
     {
-        $subject_type = SubjectType::query()->whereHas('subject_category.curriculum_subject.curriculum.student.user', function ($query) use ($id) {
+        $subject_type = SubjectType::query()->whereHas('subject_category.curriculum_subject.curriculum_type.curriculum.student.user', function ($query) use ($id) {
             $query->where('id', $id);
         })->pluck('id');
+        
         $groupedPassedSubjects = StudentRegist::query()->with('subject')->where('user_id', $id)->where('status', 'Pass')->whereHas('subject', function ($query) use ($subject_type) {
             $query->whereIn('subject_type_id', $subject_type);
         })->get()->groupBy('subject.subject_type_id');
-        return view('user.detail', compact('groupedPassedSubjects'));
+        
+        $student = Student::where('user_id', $id)->first();
+        
+        $typeName = $request->input('type_name');
+        $curriculumType = $student->curriculum->curriculum_type()->with(['curriculum_subject.subject_category'])->where('type_name', $typeName)->first();
+        
+        if (!$curriculumType) {
+            $curriculumType = $student->curriculum->curriculum_type()->with(['curriculum_subject.subject_category'])->first();
+        }
+        
+        // Calculate overall progress for this curriculum type
+        $totalNeeded = 0;
+        $totalEarned = 0;
+        
+        if ($curriculumType) {
+            $passedRegistrations = StudentRegist::where('user_id', $id)
+                ->where('status', 'Pass')
+                ->with('subject.subject_type')
+                ->get();
+
+            foreach ($curriculumType->curriculum_subject as $curriculumSubject) {
+                $category = $curriculumSubject->subject_category;
+                if ($category) {
+                    $totalNeeded += $category->credit_needed;
+
+                    $categoryEarned = $passedRegistrations->filter(function ($reg) use ($category) {
+                        return $reg->subject && 
+                               $reg->subject->subject_type && 
+                               $reg->subject->subject_type->subject_category_id == $category->id;
+                    })->sum(function ($reg) {
+                        return $reg->subject->subject_credit;
+                    });
+
+                    $totalEarned += min($categoryEarned, $category->credit_needed);
+                }
+            }
+        }
+        
+        $progress = [
+            'total_needed' => $totalNeeded,
+            'total_earned' => $totalEarned,
+            'percentage' => $totalNeeded > 0 ? min(100, round(($totalEarned / $totalNeeded) * 100)) : 0,
+            'type_name' => $curriculumType ? $curriculumType->type_name : 'N/A'
+        ];
+        
+        $curriculum_subjects = $curriculumType ? $curriculumType->curriculum_subject : collect();
+        
+        return view('user.detail', compact('groupedPassedSubjects', 'curriculum_subjects', 'progress'));
     }
+
 
     public function show($id, $type_id)
     {
@@ -41,7 +135,9 @@ class UserController extends Controller
 
     public function addSubject()
     {
-        $subjects = Subject::all();
+        $user_id  = Auth::user()->id;
+        $subject_regist = StudentRegist::where('user_id', $user_id)->pluck('subject_id')->toArray();
+        $subjects = Subject::whereNotIn('id', $subject_regist)->get();
         return view('user.add_subject', compact('subjects'));
     }
 
@@ -53,7 +149,7 @@ class UserController extends Controller
         ]);
 
         StudentRegist::create([
-            'user_id' => Auth::id(),
+            'user_id' => Auth::user()->id,
             'subject_id' => $request->subject_id,
             'status' => $request->status,
         ]);

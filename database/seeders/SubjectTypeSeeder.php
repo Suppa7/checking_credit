@@ -74,9 +74,28 @@ class SubjectTypeSeeder extends Seeder
                 'credit_needed' => 15,
                 'type_name' => 'วิชาโท'
             ],
+            [
+                'subject_category_id' => 4,
+                'credit_needed' => 39,
+                'type_name' => 'กลุ่มวิชาแกน'
+            ],
+            [
+                'subject_category_id' => 4,
+                'credit_needed' => 39,
+                'type_name' => 'วิชาชีพบังคับ'
+            ],
+            [
+                'subject_category_id' => 4,
+                'credit_needed' => 0,
+                'type_name' => 'วิชาชีพเลือก'
+            ],
+            [
+                'subject_category_id' => 4,
+                'credit_needed' => 15,
+                'type_name' => 'วิชาโท'
+            ],
         ];
-        foreach($subjectType as $item)
-        {
+        foreach ($subjectType as $item) {
             SubjectType::create($item);
         }
     }

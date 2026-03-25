@@ -10,4 +10,9 @@ class Major extends Model
         'major_id',
         'major_name_thai'
     ];
+
+    public function submajors()
+    {
+        return $this->hasMany(Submajor::class, 'major_id', 'id');
+    }
 }

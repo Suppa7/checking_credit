@@ -1,5 +1,10 @@
 @extends('layouts.app')
 
+@section('breadcrumb')
+    <li class="breadcrumb-item"><a href="{{ route('home') }}">หน้าแรก</a></li>
+    <li class="breadcrumb-item active" aria-current="page">เมนูจัดการข้อมูล</li>
+@endsection
+
 @section('content')
 <style>
     body {
@@ -115,20 +120,65 @@
                         </div>
                     </div>
 
+                    <!-- Curriculum Progress Section -->
+                    <div class="mb-5">
+                        <h5 class="fw-bold text-dark mb-4">
+                            <i class="bi bi-bar-chart-steps text-primary me-2"></i>สรุปความคืบหน้าหลักสูตร
+                        </h5>
+                        <div class="row g-4">
+                            @foreach($curriculumTypes as $type)
+                            <div class="col-md-6">
+                                <div class="card border-0 shadow-sm rounded-4 h-100" style="background: #f8f9fa; transition: transform 0.2s;">
+                                    <div class="card-body p-4">
+                                        <div class="d-flex justify-content-between align-items-start mb-3">
+                                            <div>
+                                                <h6 class="fw-bold text-dark mb-1">{{ $type->type_name }}</h6>
+                                                <small class="text-muted">ความคืบหน้ารวม</small>
+                                            </div>
+                                            <span class="badge bg-primary rounded-pill">{{ $type->progress_percentage }}%</span>
+                                        </div>
+                                        
+                                        <div class="progress mb-3" style="height: 10px; border-radius: 5px; background-color: #e9ecef;">
+                                            <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                                                 role="progressbar" 
+                                                 style="width: {{ $type->progress_percentage }}%; border-radius: 5px; background: linear-gradient(90deg, #2a5298, #1e3c72);" 
+                                                 aria-valuenow="{{ $type->progress_percentage }}" 
+                                                 aria-valuemin="0" 
+                                                 aria-valuemax="100">
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div class="text-dark small">
+                                                <span class="fw-bold">{{ $type->total_earned }}</span> 
+                                                <span class="text-muted">/ {{ $type->total_needed }} หน่วยกิต</span>
+                                            </div>
+                                            <form action="{{ route('user.detail', ['id' => Auth::user()->id]) }}" method="GET">
+                                                <input type="hidden" name="type_name" value="{{ $type->type_name }}">
+                                                <button type="submit" class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                                                    ดูรายละเอียด
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            @endforeach
+                        </div>
+                    </div>
+
                     <!-- Menu Section -->
                     <h5 class="fw-bold text-center text-dark mb-4">เมนูการจัดการ</h5>
+
                     <div class="d-grid gap-3 col-md-10 mx-auto">
-                        <a href="{{ route('user.detail', ['id' => Auth::user()->id]) }}" class="btn btn-credits btn-lg menu-btn py-3">
+                        <button type="button" class="btn btn-credits btn-lg menu-btn py-3" data-bs-toggle="modal" data-bs-target="#checkCreditsModal">
                             <i class="bi bi-card-checklist me-2"></i> เช็กหน่วยกิต (Check Credits)
-                        </a>
+                        </button>
                         
                         <a href="{{ route('user.add_subject') }}" class="btn btn-add btn-lg menu-btn py-3 text-white">
                             <i class="bi bi-journal-plus me-2"></i> เพิ่มวิชาที่ลงทะเบียน (Add Subject)
                         </a>
                         
-                        <a href="{{ route('user.edit_student') }}" class="btn btn-edit btn-lg menu-btn py-3 text-dark">
-                            <i class="bi bi-person-gear me-2"></i> แก้ไขข้อมูลนักศึกษา (Edit Info)
-                        </a>
                     </div>
                 </div>
             </div>
@@ -136,5 +186,55 @@
         </div>
     </div>
 </div>
+
+<!-- Modal for selecting Curriculum Type -->
+<div class="modal fade" id="checkCreditsModal" tabindex="-1" aria-labelledby="checkCreditsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4">
+            <div class="modal-header bg-light border-0 rounded-top-4">
+                <h5 class="modal-title fw-bold text-dark" id="checkCreditsModalLabel">
+                    <i class="bi bi-funnel-fill text-primary me-2"></i>เลือกรูปแบบหลักสูตร
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{ route('user.detail', ['id' => Auth::user()->id]) }}" method="GET">
+                <div class="modal-body p-4 text-dark">
+                    <p class="text-muted mb-3">กรุณาเลือกรูปแบบหลักสูตรที่ต้องการตรวจสอบโครงสร้างหน่วยกิต</p>
+                    <div class="mb-3">
+                        <label for="type_name" class="form-label fw-bold">รูปแบบหลักสูตร (Curriculum Type)</label>
+                        <select name="type_name" id="type_name" class="form-select form-select-lg rounded-3 shadow-sm border-0 bg-light" required>
+                            @if(isset($curriculumTypes) && $curriculumTypes->count() > 0)
+                                @foreach($curriculumTypes as $type)
+                                    <option value="{{ $type->type_name }}">{{ $type->type_name }}</option>
+                                @endforeach
+                            @else
+                                <option value="" disabled>-- ไม่พบรูปแบบหลักสูตร --</option>
+                            @endif
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 p-4 pt-0">
+                    <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">ยกเลิก</button>
+                    <button type="submit" class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm">
+                        <i class="bi bi-check2-circle me-1"></i> ยืนยัน
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        // Initialize Select2 when the modal is shown
+        $('#checkCreditsModal').on('shown.bs.modal', function () {
+            $('#type_name').select2({
+                dropdownParent: $('#checkCreditsModal'), // Fix dropdown z-index inside modal
+                width: '100%',
+                placeholder: 'เลือกรูปแบบหลักสูตร',
+                allowClear: true
+            });
+        });
+    });
+</script>
 @endsection
-  

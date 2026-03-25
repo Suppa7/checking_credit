@@ -1,5 +1,11 @@
 @extends('layouts.app')
 
+@section('breadcrumb')
+    <li class="breadcrumb-item"><a href="{{ route('home') }}">หน้าแรก</a></li>
+    <li class="breadcrumb-item"><a href="{{ route('admin.majors.index') }}">จัดการหลักสูตร (Major)</a></li>
+    <li class="breadcrumb-item active" aria-current="page">เพิ่มข้อมูลหลักสูตร (Major)</li>
+@endsection
+
 @section('content')
 <div class="container py-4">
     <div class="row justify-content-center">

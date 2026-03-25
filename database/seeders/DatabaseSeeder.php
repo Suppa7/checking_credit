@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             SubjectOwnSeeder::class,
             UserSeeder::class,
             CurriculumSeeder::class,
+            CurriculumTpyeSeeder::class,
             CurriculumSubjectSeeder::class,
             SubjectCategorySeeder::class,
             SubjectTypeSeeder::class,

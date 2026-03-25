@@ -26,6 +26,10 @@ class SubjectCategorySeeder extends Seeder
             'category_name' => 'ค. หมวดวิชาเลือกเสร',
             'credit_needed' => 6,
             ],  
+            [
+            'category_name' => 'ข. หมวดวิชาเฉพาะ ',
+            'credit_needed' => 93,
+            ],
         ];
 
         foreach($subjectCategory as $item){

@@ -33,7 +33,11 @@ class CurriculumController extends Controller
 
     public function show(Curriculum $curriculum)
     {
-        //
+        $curriculum->load([
+            'curriculum_type.curriculum_subject.subject_category.subject_type.subjects'
+        ]);
+
+        return view('admin.curriculums.show', compact('curriculum'));
     }
 
     public function edit(Curriculum $curriculum)
@@ -55,9 +59,14 @@ class CurriculumController extends Controller
     }
 
     public function destroy(Curriculum $curriculum)
+
     {
         $curriculum->delete();
 
         return redirect()->route('admin.curriculums.index')->with('success', 'ลบข้อมูลเล่มหลักสูตรสำเร็จ');
     }
 }
+
+
+
+

@@ -65,7 +65,8 @@
 
                                     <div class="lh-1">
                                         <div class="fw-bold mb-0" style="font-size: 0.85rem;">
-                                            {{ Auth::user()->student?->student_name }}</div>
+                                            {{ Auth::user()->student?->student_name }}
+                                        </div>
                                         <small class="text-muted" style="font-size: 0.7rem;">ID:
                                             {{ Auth::user()->student_id }}</small>
                                     </div>
@@ -73,7 +74,7 @@
 
                                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                                     <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault();
-                                                         document.getElementById('logout-form').submit();">
+                                                             document.getElementById('logout-form').submit();">
                                         {{ __('Logout') }}
                                     </a>
 
@@ -89,9 +90,24 @@
         </nav>
 
         <main class="py-4">
+            @hasSection('breadcrumb')
+                <div class="container mb-4">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb bg-white px-4 py-3 rounded-3 shadow-sm mb-0"
+                            style="border-left: 5px solid #0d6efd; font-size: 0.95rem;">
+                            @yield('breadcrumb')
+                        </ol>
+                    </nav>
+                </div>
+            @endif
             @yield('content')
         </main>
     </div>
+    <!-- jQuery (Required for Select2) -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <!-- Select2 CSS & JS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 </body>
 
 </html>

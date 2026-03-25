@@ -1,5 +1,10 @@
 @extends('layouts.app')
 
+@section('breadcrumb')
+    <li class="breadcrumb-item"><a href="{{ route('home') }}">หน้าแรก</a></li>
+    <li class="breadcrumb-item active" aria-current="page">เมนูจัดการข้อมูล</li>
+@endsection
+
 @section('content')
     <div class="container py-4">
         <div class="row justify-content-center">
@@ -124,6 +129,35 @@
                             </div>
                         </div>
                     </div>
+
+                    {{-- User Management --}}
+                    <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6">
+                        <div class="card h-100 shadow-sm border-0 rounded-4 hover-lift">
+                            <div class="card-body text-center p-4 d-flex flex-column">
+                                <div class="icon-circle bg-dark bg-opacity-10 text-dark mb-3 mx-auto">
+                                    <span class="fs-1">👤</span>
+                                </div>
+                                <h5 class="card-title fw-bold">ผู้ใช้งาน (Users)</h5>
+                                <p class="card-text text-muted flex-grow-1 small">จัดการบัญชีผู้ใช้งานและสิทธิ์</p>
+                                <a href="{{ route('admin.user_managements.index') }}" class="btn btn-outline-dark rounded-pill px-4 mt-2 w-100 fw-semibold">จัดการ</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Curriculum Type --}}
+                    <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6">
+                        <div class="card h-100 shadow-sm border-0 rounded-4 hover-lift">
+                            <div class="card-body text-center p-4 d-flex flex-column">
+                                <div class="icon-circle bg-primary bg-opacity-10 text-primary mb-3 mx-auto">
+                                    <span class="fs-1">📋</span>
+                                </div>
+                                <h5 class="card-title fw-bold">รูปแบบหลักสูตร</h5>
+                                <p class="card-text text-muted flex-grow-1 small">จัดการรูปแบบหลักสูตรแต่ละเล่ม</p>
+                                <a href="{{ route('admin.curriculum_types.index') }}" class="btn btn-outline-primary rounded-pill px-4 mt-2 w-100 fw-semibold">จัดการ</a>
+                            </div>
+                        </div>
+                    </div>
+
 
                 </div>
             </div>

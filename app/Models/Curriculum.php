@@ -19,9 +19,9 @@ class Curriculum extends Model
      */
     protected $table = 'curriculums';
 
-    public function curriculum_subject()
+    public function curriculum_type()
     {
-        return $this->hasMany(CurriculumSubject::class);
+        return $this->hasMany(CurriculumType::class);
     }
 
     public function student()

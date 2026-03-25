@@ -1,5 +1,10 @@
 @extends('layouts.app')
 
+@section('breadcrumb')
+    <li class="breadcrumb-item"><a href="{{ route('home') }}">หน้าแรก</a></li>
+    <li class="breadcrumb-item active" aria-current="page">ตรวจสอบผลการเรียนตามโครงสร้างหลักสูตร</li>
+@endsection
+
 @section('content')
 <style>
     body {
@@ -62,12 +67,55 @@
             <h3 class="fw-bold mb-0">รายละเอียดหน่วยกิต</h3>
             <p class="opacity-75 small">ตรวจสอบความคืบหน้าของรายวิชาตามโครงสร้างหลักสูตร</p>
         </div>
-        <a href="{{ route('user.index') }}" class="btn btn-light rounded-pill px-4 shadow-sm fw-bold">
+        <a href="{{ route('user.add_subject') }}" class="btn btn-light rounded-pill px-4 shadow-sm fw-bold">
             <i class="bi bi-plus-circle-fill me-2 text-primary"></i>เพิ่มรายวิชา
         </a>
     </div>
 
+    @if(isset($progress))
+    <div class="card glass-card mb-4 border-0 shadow-lg">
+        <div class="card-body p-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                    <h5 class="fw-bold text-dark mb-1">
+                        <i class="bi bi-mortarboard-fill text-primary me-2"></i>{{ $progress['type_name'] }}
+                    </h5>
+                    <span class="text-muted small">ความคืบหน้าภาพรวมของหลักสูตร</span>
+                </div>
+                <div class="text-end">
+                    <span class="badge bg-primary rounded-pill fs-6 px-3">{{ $progress['percentage'] }}%</span>
+                </div>
+            </div>
+            
+            <div class="progress mb-3" style="height: 15px; border-radius: 10px; background-color: #e9ecef;">
+                <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                     role="progressbar" 
+                     style="width: {{ $progress['percentage'] }}%; border-radius: 10px; background: linear-gradient(90deg, #2a5298, #1e3c72);" 
+                     aria-valuenow="{{ $progress['percentage'] }}" 
+                     aria-valuemin="0" 
+                     aria-valuemax="100">
+                </div>
+            </div>
+            
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="text-dark">
+                    <span class="fw-bold fs-5">{{ $progress['total_earned'] }}</span> 
+                    <span class="text-muted">/ {{ $progress['total_needed'] }} หน่วยกิตที่ต้องเก็บ</span>
+                </div>
+                <div class="text-muted small">
+                    @if($progress['percentage'] >= 100)
+                        <span class="text-success fw-bold"><i class="bi bi-check-all me-1"></i>สำเร็จครบถ้วน</span>
+                    @else
+                        <span>ขาดอีก <span class="fw-bold text-danger">{{ max(0, $progress['total_needed'] - $progress['total_earned']) }}</span> หน่วยกิต</span>
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
+
     <div class="card glass-card shadow-lg border-0">
+
         <div class="card-body p-4">
             <div class="table-responsive">
                 <table class="table">
@@ -82,7 +130,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach(Auth::user()->student->curriculum->curriculum_subject as $items)
+                        @foreach($curriculum_subjects as $items)
                             <tr class="category-row">
                                 <td colspan="3" class="fw-bold text-primary">
                                     <i class="bi bi-collection-fill me-2"></i>{{ $items->subject_category->category_name }}

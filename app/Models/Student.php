@@ -13,13 +13,25 @@ class Student extends Model
     protected $fillable = [
         'user_id',
         'student_name',
+        'curriculum_id',
         'major_id',
         'submajor_id'
     ];
 
+
     public function curriculum()
     {
         return $this->belongsTo(Curriculum::class);
+    }
+
+    public function major()
+    {
+        return $this->belongsTo(Major::class);
+    }
+
+    public function submajor()
+    {
+        return $this->belongsTo(Submajor::class);
     }
 
     public function user()

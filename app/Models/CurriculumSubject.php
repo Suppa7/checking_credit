@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class CurriculumSubject extends Model
 {
     protected $fillable = [
-        'curriculum_id',
+        'curriculum_type_id',
         'subject_category_id'
     ];
     //
@@ -16,8 +16,8 @@ class CurriculumSubject extends Model
         return $this->belongsTo(SubjectCategory::class);
     }
 
-    public function curriculum()
+    public function curriculum_type()
     {
-        return $this->belongsTo(Curriculum::class);
+        return $this->belongsTo(CurriculumType::class);
     }
 }

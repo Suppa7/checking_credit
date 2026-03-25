@@ -11,4 +11,10 @@ class SubjectType extends Model
     {
         return $this->belongsTo(SubjectCategory::class,'subject_category_id','id');
     }
+
+    public function subjects()
+    {
+        return $this->hasMany(Subject::class, 'subject_type_id', 'id');
+    }
 }
+

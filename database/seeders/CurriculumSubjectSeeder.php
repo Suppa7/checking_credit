@@ -15,15 +15,27 @@ class CurriculumSubjectSeeder extends Seeder
     {
         $curriculumSubject = [
             [
-                'curriculum_id'=>1,
+                'curriculum_type_id'=>1,
                 'subject_category_id'=>1
             ],
             [
-                'curriculum_id'=>1,
+                'curriculum_type_id'=>1,
                 'subject_category_id'=>2
             ],
             [
-                'curriculum_id'=>1,
+                'curriculum_type_id'=>1,
+                'subject_category_id'=>3
+            ],
+            [
+                'curriculum_type_id'=>2,
+                'subject_category_id'=>1
+            ],
+            [
+                'curriculum_type_id'=>2,
+                'subject_category_id'=>4
+            ],
+            [
+                'curriculum_type_id'=>2,
                 'subject_category_id'=>3
             ],
         ];

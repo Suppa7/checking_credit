@@ -11,6 +11,8 @@ use App\Http\Controllers\CurriculumSubjectController;
 use App\Http\Controllers\SubjectTypeController;
 use App\Http\Controllers\SubjectOwnController;
 use App\Http\Controllers\SubjectCategoryController;
+use App\Http\Controllers\UserManagementController;
+use App\Http\Controllers\CurriculumTypeController;
 
 Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [AdminController::class, 'index'])->name('index');
@@ -19,8 +21,12 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::resource('curriculums', CurriculumController::class);
     Route::resource('majors', MajorController::class);
     Route::resource('submajors', SubmajorController::class);
+    Route::resource('users', UserManagementController::class)->names('user_managements');
+    Route::resource('curriculum-types', CurriculumTypeController::class)->parameters(['curriculum-types' => 'curriculum_type'])->names('curriculum_types');
     Route::resource('curriculum-subjects', CurriculumSubjectController::class)->parameters(['curriculum-subjects' => 'curriculum_subject'])->names('curriculum_subjects');
+
     Route::resource('subject-types', SubjectTypeController::class)->parameters(['subject-types' => 'subject_type'])->names('subject_types');
+
     Route::resource('subject-owns', SubjectOwnController::class)->parameters(['subject-owns' => 'subject_own'])->names('subject_owns');
     Route::resource('subject-categories', SubjectCategoryController::class)->parameters(['subject-categories' => 'subject_category'])->names('subject_categories');
 });
