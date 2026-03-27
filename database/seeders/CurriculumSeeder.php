@@ -15,33 +15,27 @@ class CurriculumSeeder extends Seeder
     {
         $curriculum = [
             [ //1
-                'program_name' => 'หลักสูตรบริหารธุรกิจบัณฑิต',
-                'curriculum_name' => 'หลักสูตรบริหารธุรกิจบัณฑิต',
+                'major_id' => 1,
                 'curriculum_year' => '2563',
             ],
             [ //2
-                'program_name' => 'หลักสูตรบริหารธุรกิจบัณฑิต',
-                'curriculum_name' => 'หลักสูตรบริหารธุรกิจบัณฑิต',
+                'major_id' => 1,
                 'curriculum_year' => '2567',
             ],
             [ //3
-                'program_name' => 'หลักสูตรบริหารธุรกิจบัณฑิต(หลักสูตรนานาชาติ)',
-                'curriculum_name' => 'หลักสูตรบริหารธุรกิจบัณฑิต(หลักสูตรนานาชาติ)',
+                'major_id' => 2,
                 'curriculum_year' => '2564',
             ],
             [ //4
-                'program_name' => 'หลักสูตรบริหารธุรกิจบัณฑิต(หลักสูตรนานาชาติ)',
-                'curriculum_name' => 'หลักสูตรบริหารธุรกิจบัณฑิต(หลักสูตรนานาชาติ)',
+                'major_id' => 2,
                 'curriculum_year' => '2568',
             ],
             [ //5
-                'program_name' => 'หลักสูตรบัญชีบัณฑิต',
-                'curriculum_name' => 'หลักสูตรบัญชีบัณฑิต',
+                'major_id' => 3,
                 'curriculum_year' => '2564',
             ],
             [ //6
-                'program_name' => 'หลักสูตรบัญชีบัณฑิต',
-                'curriculum_name' => 'หลักสูตรบัญชีบัณฑิต',
+                'major_id' => 3,
                 'curriculum_year' => '2568',
             ],
         ];

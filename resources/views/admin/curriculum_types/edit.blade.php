@@ -24,11 +24,30 @@
                                 <option value="">-- เลือกเล่มหลักสูตร --</option>
                                 @foreach($curriculums as $curriculum)
                                     <option value="{{ $curriculum->id }}" {{ old('curriculum_id', $curriculumType->curriculum_id) == $curriculum->id ? 'selected' : '' }}>
-                                        {{ $curriculum->program_name }} - {{ $curriculum->curriculum_name }} ({{ $curriculum->curriculum_year }})
+                                        {{ $curriculum->major->major_name_thai }} (ปี {{ $curriculum->curriculum_year }})
                                     </option>
                                 @endforeach
                             </select>
                             @error('curriculum_id')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="submajor_id" class="form-label">แขนงวิชา (Submajor)</label>
+                            <select name="submajor_id" id="submajor_id" class="form-select @error('submajor_id') is-invalid @enderror" required>
+                                <option value="">-- เลือกแขนงวิชา --</option>
+                                @foreach($majors as $major)
+                                    <optgroup label="{{ $major->major_name_thai }}">
+                                        @foreach($major->submajors as $submajor)
+                                            <option value="{{ $submajor->id }}" {{ old('submajor_id', $curriculumType->submajor_id) == $submajor->id ? 'selected' : '' }}>
+                                                {{ $submajor->submajor_name_thai }}
+                                            </option>
+                                        @endforeach
+                                    </optgroup>
+                                @endforeach
+                            </select>
+                            @error('submajor_id')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
@@ -39,6 +58,42 @@
                             @error('type_name')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">การกำหนดสิทธิ์การเรียนข้ามแขนง (Submajor Measure)</label>
+                            <div class="table-responsive border rounded-3">
+                                <table class="table table-sm table-hover mb-0">
+                                    <thead class="table-light text-center">
+                                        <tr>
+                                            <th class="text-start ps-3">Major / Submajor</th>
+                                            <th width="120">Allowed</th>
+                                            <th width="120">Not Allowed</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($majors as $major)
+                                            <tr class="table-secondary bg-opacity-10">
+                                                <td colspan="3" class="ps-3 fw-bold small text-uppercase text-muted">{{ $major->major_name_thai }}</td>
+                                            </tr>
+                                            @foreach($major->submajors as $submajor)
+                                                @php
+                                                    $currentValue = $measures[$submajor->id] ?? 'not allowed';
+                                                @endphp
+                                                <tr>
+                                                    <td class="ps-4 align-middle">{{ $submajor->submajor_name_thai }}</td>
+                                                    <td class="text-center align-middle">
+                                                        <input class="form-check-input" type="radio" name="submajor_measures[{{ $submajor->id }}]" value="allowed" {{ $currentValue == 'allowed' ? 'checked' : '' }}>
+                                                    </td>
+                                                    <td class="text-center align-middle">
+                                                        <input class="form-check-input" type="radio" name="submajor_measures[{{ $submajor->id }}]" value="not allowed" {{ $currentValue == 'not allowed' ? 'checked' : '' }}>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                            <small class="text-muted mt-2 d-block">* 'Allowed' หมายถึงนักศึกษาสามารถเลือกเรียนวิชาโทนอกแขนงของตนเองได้</small>
                         </div>
 
                         <div class="d-flex justify-content-between">

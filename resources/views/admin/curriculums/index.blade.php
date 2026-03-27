@@ -25,8 +25,7 @@
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th class="px-4 py-3">ชื่อแผนการศึกษา (Program)</th>
-                            <th class="px-4 py-3">ชื่อหลักสูตร (Curriculum)</th>
+                            <th class="px-4 py-3">สาขาวิชา (Major)</th>
                             <th class="px-4 py-3 text-center">ปีที่ปรับปรุง</th>
                             <th class="px-4 py-3 text-center">รายวิชา</th>
                             <th class="px-4 py-3 text-end">จัดการ</th>
@@ -35,8 +34,7 @@
                     <tbody>
                         @forelse($curriculums as $curriculum)
                         <tr>
-                            <td class="px-4 py-3 align-middle">{{ $curriculum->program_name }}</td>
-                            <td class="px-4 py-3 align-middle">{{ $curriculum->curriculum_name }}</td>
+                            <td class="px-4 py-3 align-middle">{{ $curriculum->major->major_name_thai }}</td>
                             <td class="px-4 py-3 text-center align-middle">{{ $curriculum->curriculum_year }}</td>
                             <td class="px-4 py-3 text-center align-middle">
                                 <a href="{{ route('admin.curriculums.show', $curriculum) }}" class="btn btn-sm btn-outline-info rounded-pill px-3">
@@ -55,7 +53,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="5" class="text-center px-4 py-4 text-muted">ไม่พบข้อมูล</td>
+                            <td colspan="4" class="text-center px-4 py-4 text-muted">ไม่พบข้อมูล</td>
                         </tr>
                         @endforelse
                     </tbody>

@@ -30,6 +30,7 @@
                             <th class="px-4 py-3">หน่วยกิต</th>
                             <th class="px-4 py-3">หมวดวิชา</th>
                             <th class="px-4 py-3">เจ้าของวิชา</th>
+                            <th class="px-4 py-3">หลักสูตร</th>
                             <th class="px-4 py-3 text-end">จัดการ</th>
                         </tr>
                     </thead>
@@ -50,6 +51,15 @@
                                     -
                                 @endif
                             </td>
+                            <td class="px-4 py-3 align-middle">
+                                @if($subject->subject_curriculum->count())
+                                    @foreach($subject->subject_curriculum as $cur)
+                                        <span class="badge bg-info text-dark">{{ $cur->curriculum->curriculum_name }} ({{ $cur->curriculum->curriculum_year }})</span>
+                                    @endforeach
+                                @else
+                                    -
+                                @endif
+                            </td>
                             <td class="px-4 py-3 text-end">
                                 <a href="{{ route('admin.subjects.edit', $subject) }}" class="btn btn-sm btn-outline-warning">แก้ไข</a>
                                 <form action="{{ route('admin.subjects.destroy', $subject) }}" method="POST" class="d-inline" onsubmit="return confirm('ยืนยันการลบข้อมูล?');">
@@ -61,7 +71,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="6" class="text-center px-4 py-4 text-muted">ไม่พบข้อมูล</td>
+                            <td colspan="7" class="text-center px-4 py-4 text-muted">ไม่พบข้อมูล</td>
                         </tr>
                         @endforelse
                     </tbody>

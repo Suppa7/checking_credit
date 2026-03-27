@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('curriculum_id');
             $table->string('type_name');
+            $table->foreignId('submajor_id')->nullable();
             $table->timestamps();
         });
     }

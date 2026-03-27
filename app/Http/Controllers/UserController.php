@@ -69,17 +69,46 @@ class UserController extends Controller
             $query->where('id', $id);
         })->pluck('id');
         
-        $groupedPassedSubjects = StudentRegist::query()->with('subject')->where('user_id', $id)->where('status', 'Pass')->whereHas('subject', function ($query) use ($subject_type) {
+        $groupedPassedSubjects = StudentRegist::query()->with(['subject.subject_own', 'subject.subject_type'])->where('user_id', $id)->where('status', 'Pass')->whereHas('subject', function ($query) use ($subject_type) {
             $query->whereIn('subject_type_id', $subject_type);
         })->get()->groupBy('subject.subject_type_id');
         
         $student = Student::where('user_id', $id)->first();
+        $curriculum = $student->curriculum;
         
         $typeName = $request->input('type_name');
-        $curriculumType = $student->curriculum->curriculum_type()->with(['curriculum_subject.subject_category'])->where('type_name', $typeName)->first();
+        $curriculumType = $curriculum->curriculum_type()->with([
+            'curriculum_subject.subject_category.subject_type.subjects.subject_own',
+            'curriculum_subject.subject_category.subject_type.subjects.subject_curriculum'
+        ])->where('type_name', $typeName)->first();
         
         if (!$curriculumType) {
-            $curriculumType = $student->curriculum->curriculum_type()->with(['curriculum_subject.subject_category'])->first();
+            $curriculumType = $curriculum->curriculum_type()->with([
+                'curriculum_subject.subject_category.subject_type.subjects.subject_own',
+                'curriculum_subject.subject_category.subject_type.subjects.subject_curriculum'
+            ])->first();
+        }
+
+        // Check SubmajorMeasure for elective filtering
+        $measure = \App\Models\SubmajorMeasure::where('curriculum_type_id', $curriculumType->id)
+            ->where('submajor_id', $student->submajor_id)
+            ->first();
+        
+        $isElectiveAllowed = $measure && $measure->type == 'allowed';
+
+        // Filter subjects in the curriculum structure if elective is not allowed
+        if (!$isElectiveAllowed && $curriculumType) {
+            foreach ($curriculumType->curriculum_subject as $cs) {
+                if ($cs->subject_category) {
+                    foreach ($cs->subject_category->subject_type as $st) {
+                        if ($st->type_name == 'วิชาชีพเลือก') {
+                            $st->setRelation('subjects', $st->subjects->filter(function($subject) use ($student) {
+                                return $subject->subject_own && $subject->subject_own->submajor_id == $student->submajor_id;
+                            }));
+                        }
+                    }
+                }
+            }
         }
         
         // Calculate overall progress for this curriculum type
@@ -89,8 +118,28 @@ class UserController extends Controller
         if ($curriculumType) {
             $passedRegistrations = StudentRegist::where('user_id', $id)
                 ->where('status', 'Pass')
-                ->with('subject.subject_type')
+                ->with(['subject.subject_type', 'subject.subject_own'])
                 ->get();
+
+            // Filter passed registrations for 'วิชาชีพเลือก' if not allowed
+            if (!$isElectiveAllowed) {
+                $passedRegistrations = $passedRegistrations->filter(function ($reg) use ($student) {
+                    if ($reg->subject && $reg->subject->subject_type && $reg->subject->subject_type->type_name == 'วิชาชีพเลือก') {
+                        return $reg->subject->subject_own && $reg->subject->subject_own->submajor_id == $student->submajor_id;
+                    }
+                    return true;
+                });
+
+                // Also update the groupedPassedSubjects for the view
+                foreach ($groupedPassedSubjects as $typeId => $registrations) {
+                    $firstReg = $registrations->first();
+                    if ($firstReg && $firstReg->subject && $firstReg->subject->subject_type && $firstReg->subject->subject_type->type_name == 'วิชาชีพเลือก') {
+                        $groupedPassedSubjects[$typeId] = $registrations->filter(function ($reg) use ($student) {
+                            return $reg->subject && $reg->subject->subject_own && $reg->subject->subject_own->submajor_id == $student->submajor_id;
+                        });
+                    }
+                }
+            }
 
             foreach ($curriculumType->curriculum_subject as $curriculumSubject) {
                 $category = $curriculumSubject->subject_category;
@@ -119,17 +168,33 @@ class UserController extends Controller
         
         $curriculum_subjects = $curriculumType ? $curriculumType->curriculum_subject : collect();
         
-        return view('user.detail', compact('groupedPassedSubjects', 'curriculum_subjects', 'progress'));
+        return view('user.detail', compact('groupedPassedSubjects', 'curriculum_subjects', 'progress', 'isElectiveAllowed'));
     }
 
 
     public function show($id, $type_id)
     {
-        $passedSubjects = StudentRegist::query()->with('subject')->where('user_id', $id)->where('status', 'Pass')->whereHas('subject', function ($query) use ($type_id) {
-            $query->where('subject_type_id', $type_id);
+        $student = Student::where('user_id', $id)->first();
+        $curriculum_id = $student->curriculum_id;
+
+        $passedSubjects = StudentRegist::query()->with('subject.subject_curriculum')->where('user_id', $id)->where('status', 'Pass')->whereHas('subject', function ($query) use ($type_id, $curriculum_id) {
+            $query->where('subject_type_id', $type_id)
+                  ->whereHas('subject_curriculum', function($q) use ($curriculum_id) {
+                      $q->where('curriculum_id', $curriculum_id);
+                  });
         })->get();
+
         $passSubjectId = $passedSubjects->pluck('subject_id')->toArray();
-        $unpassedSubjects = Subject::query()->where('subject_type_id', $type_id)->whereNotIn('id', $passSubjectId)->get();
+
+        $unpassedSubjects = Subject::query()
+            ->with('subject_curriculum')
+            ->where('subject_type_id', $type_id)
+            ->whereHas('subject_curriculum', function($q) use ($curriculum_id) {
+                $q->where('curriculum_id', $curriculum_id);
+            })
+            ->whereNotIn('id', $passSubjectId)
+            ->get();
+
         return view('user.show', compact('passedSubjects', 'unpassedSubjects'));
     }
 

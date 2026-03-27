@@ -18,16 +18,16 @@
                     <form action="{{ route('admin.curriculums.store') }}" method="POST">
                         @csrf
                         <div class="mb-3">
-                            <label for="program_name" class="form-label fw-bold">ชื่อแผนการศึกษา (Program Name)</label>
-                            <input type="text" class="form-control @error('program_name') is-invalid @enderror" id="program_name" name="program_name" value="{{ old('program_name') }}" required>
-                            @error('program_name')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                        <div class="mb-3">
-                            <label for="curriculum_name" class="form-label fw-bold">ชื่อหลักสูตร (Curriculum Name)</label>
-                            <input type="text" class="form-control @error('curriculum_name') is-invalid @enderror" id="curriculum_name" name="curriculum_name" value="{{ old('curriculum_name') }}" required>
-                            @error('curriculum_name')
+                            <label for="major_id" class="form-label fw-bold">สาขาวิชา (Major)</label>
+                            <select class="form-select @error('major_id') is-invalid @enderror" id="major_id" name="major_id" required>
+                                <option value="">-- เลือกสาขาวิชา --</option>
+                                @foreach($majors as $major)
+                                    <option value="{{ $major->id }}" {{ old('major_id') == $major->id ? 'selected' : '' }}>
+                                        {{ $major->major_name_thai }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('major_id')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>

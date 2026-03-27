@@ -69,6 +69,20 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
+                        <div class="mb-4">
+                            <label for="curriculum_ids" class="form-label fw-bold">หลักสูตรที่เปิดสอน</label>
+                            <select name="curriculum_ids[]" id="curriculum_ids" multiple class="form-select select2-curriculum">
+                                @foreach($curriculums as $curriculum)
+                                    <option value="{{ $curriculum->id }}" {{ in_array($curriculum->id, old('curriculum_ids', [])) ? 'selected' : '' }}>
+                                        {{ $curriculum->major->major_name_thai }} (ปี {{ $curriculum->curriculum_year }})
+                                    </option>
+                                @endforeach
+                            </select>
+                            <div class="form-text text-muted">พิมพ์เพื่อค้นหา หรือคลิกเพื่อเลือกหลักสูตร (เลือกได้หลายรายการ)</div>
+                            @error('curriculum_ids')
+                                <div class="text-danger small mt-1">{{ $message }}</div>
+                            @enderror
+                        </div>
                         <div class="d-flex justify-content-end gap-2">
                             <a href="{{ route('admin.subjects.index') }}" class="btn btn-secondary">ยกเลิก</a>
                             <button type="submit" class="btn btn-primary">บันทึกข้อมูล</button>
@@ -80,3 +94,84 @@
     </div>
 </div>
 @endsection
+
+@push('styles')
+    <!-- Select2 Bootstrap 5 Theme -->
+    <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
+    <style>
+        /* Modern Premium Select2 Styling */
+        .select2-container--bootstrap-5 .select2-selection {
+            border-radius: 0.75rem !important;
+            border: 1px solid #e2e8f0 !important;
+            min-height: 48px !important;
+            padding: 0.5rem 0.75rem !important;
+            background-color: #ffffff !important;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        }
+
+        .select2-container--bootstrap-5.select2-container--focus .select2-selection {
+            border-color: #4f46e5 !important;
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1) !important;
+        }
+
+        .select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__choice {
+            background-color: #f1f5f9 !important;
+            color: #1e293b !important;
+            border: 1px solid #e2e8f0 !important;
+            border-radius: 0.5rem !important;
+            padding: 4px 12px !important;
+            font-weight: 500 !important;
+            margin-top: 5px !important;
+            font-size: 0.875rem !important;
+        }
+
+        .select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__choice__remove {
+            color: #64748b !important;
+            margin-right: 8px !important;
+            border: none !important;
+            background: transparent !important;
+        }
+
+        .select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__choice__remove:hover {
+            color: #ef4444 !important;
+        }
+
+        .select2-container--bootstrap-5 .select2-results__option--highlighted[aria-selected] {
+            background-color: #4f46e5 !important;
+            color: #ffffff !important;
+        }
+
+        .select2-container--bootstrap-5 .select2-dropdown {
+            border-radius: 0.75rem !important;
+            border: 1px solid #e2e8f0 !important;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important;
+            overflow: hidden !important;
+        }
+    </style>
+@endpush
+
+@push('scripts')
+<script>
+    $(document).ready(function () {
+        // Apply Select2 to all relevant dropdowns
+        $('#subject_type_id, #subject_own_id, .select2-curriculum').select2({
+            theme: 'bootstrap-5',
+            width: '100%',
+            placeholder: function() {
+                return $(this).attr('placeholder') || $(this).attr('title') || '-- เลือก --';
+            },
+            allowClear: true
+        });
+
+        // Specific multi-select config for curriculum
+        $('.select2-curriculum').select2({
+            theme: 'bootstrap-5',
+            placeholder: '-- ค้นหาและเลือกหลักสูตร --',
+            allowClear: true,
+            closeOnSelect: false,
+            width: '100%'
+        });
+    });
+</script>
+@endpush

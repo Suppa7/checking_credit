@@ -102,13 +102,13 @@
                             <div class="col-md-6">
                                 <div class="student-info-box">
                                     <div class="info-label">หลักสูตร</div>
-                                    <div class="info-value">{{ Auth::user()->student->curriculum->program_name }}</div>
+                                    <div class="info-value">{{ Auth::user()->student->curriculum->major->major_name_thai }}</div>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="student-info-box">
                                     <div class="info-label">วิชาเอก</div>
-                                    <div class="info-value">{{ Auth::user()->student->curriculum->curriculum_name }}</div>
+                                    <div class="info-value">{{ Auth::user()->student->major->major_name_thai ?? '-' }}</div>
                                 </div>
                             </div>
                             <div class="col-md-12">

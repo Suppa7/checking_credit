@@ -9,20 +9,20 @@ class CurriculumController extends Controller
 {
     public function index()
     {
-        $curriculums = Curriculum::all();
+        $curriculums = Curriculum::with('major')->get();
         return view('admin.curriculums.index', compact('curriculums'));
     }
 
     public function create()
     {
-        return view('admin.curriculums.create');
+        $majors = \App\Models\Major::all();
+        return view('admin.curriculums.create', compact('majors'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'program_name' => 'required|string|max:255',
-            'curriculum_name' => 'required|string|max:255',
+            'major_id' => 'required|exists:majors,id',
             'curriculum_year' => 'required|string|max:4',
         ]);
 
@@ -34,7 +34,9 @@ class CurriculumController extends Controller
     public function show(Curriculum $curriculum)
     {
         $curriculum->load([
-            'curriculum_type.curriculum_subject.subject_category.subject_type.subjects'
+            'major',
+            'curriculum_type',
+            'subject_curriculum.subject.subject_type.subject_category'
         ]);
 
         return view('admin.curriculums.show', compact('curriculum'));
@@ -42,14 +44,14 @@ class CurriculumController extends Controller
 
     public function edit(Curriculum $curriculum)
     {
-        return view('admin.curriculums.edit', compact('curriculum'));
+        $majors = \App\Models\Major::all();
+        return view('admin.curriculums.edit', compact('curriculum', 'majors'));
     }
 
     public function update(Request $request, Curriculum $curriculum)
     {
         $request->validate([
-            'program_name' => 'required|string|max:255',
-            'curriculum_name' => 'required|string|max:255',
+            'major_id' => 'required|exists:majors,id',
             'curriculum_year' => 'required|string|max:4',
         ]);
 

@@ -27,7 +27,9 @@
                     <thead class="table-light">
                         <tr>
                             <th class="px-4 py-3">เล่มหลักสูตร (Curriculum)</th>
+                            <th class="px-4 py-3">แขนงวิชา (Submajor)</th>
                             <th class="px-4 py-3">ชื่อรูปแบบ (Type Name)</th>
+                            <th class="px-4 py-3">Measure Status</th>
                             <th class="px-4 py-3 text-end">จัดการ</th>
                         </tr>
                     </thead>
@@ -35,10 +37,30 @@
                         @forelse($curriculum_types as $type)
                         <tr>
                             <td class="px-4 py-3 align-middle">
-                                <strong>{{ $type->curriculum->program_name }}</strong><br>
-                                <small class="text-muted">{{ $type->curriculum->curriculum_name }} ({{ $type->curriculum->curriculum_year }})</small>
+                                <strong>{{ $type->curriculum->major->major_name_thai }}</strong><br>
+                                <small class="text-muted">ปีที่ปรับปรุง: {{ $type->curriculum->curriculum_year }}</small>
+                            </td>
+                            <td class="px-4 py-3 align-middle">
+                                @if($type->submajor)
+                                    {{ $type->submajor->submajor_name_thai }}
+                                @else
+                                    <span class="text-muted small">ไม่ได้ระบุ</span>
+                                @endif
                             </td>
                             <td class="px-4 py-3 align-middle">{{ $type->type_name }}</td>
+                            <td class="px-4 py-3 align-middle">
+                                @php
+                                    $allowedCount = $type->submajor_measure->where('type', 'allowed')->count();
+                                    $totalCount = $type->submajor_measure->count();
+                                @endphp
+                                @if($totalCount > 0)
+                                    <span class="badge bg-{{ $allowedCount == $totalCount ? 'success' : ($allowedCount > 0 ? 'info' : 'secondary') }} rounded-pill">
+                                        Allowed: {{ $allowedCount }} / {{ $totalCount }}
+                                    </span>
+                                @else
+                                    <span class="badge bg-light text-muted border rounded-pill small">Not Configured</span>
+                                @endif
+                            </td>
                             <td class="px-4 py-3 text-end">
                                 <a href="{{ route('admin.curriculum_types.edit', $type) }}" class="btn btn-sm btn-outline-warning">แก้ไข</a>
                                 <form action="{{ route('admin.curriculum_types.destroy', $type) }}" method="POST" class="d-inline" onsubmit="return confirm('ยืนยันการลบรูปแบบหลักสูตร?');">

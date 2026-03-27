@@ -7,8 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Curriculum extends Model
 {
     protected $fillable = [
-        'program_name',
-        'curriculum_name',
+        'major_id',
         'curriculum_year'
     ];
     //
@@ -27,5 +26,15 @@ class Curriculum extends Model
     public function student()
     {
         return $this->hasMany(Student::class);
+    }
+
+    public function subject_curriculum()
+    {
+        return $this->hasMany(SubjectCurriculum::class);
+    }
+
+    public function major()
+    {
+        return $this->belongsTo(Major::class);
     }
 }

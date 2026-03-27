@@ -11,10 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('curriculums', function (Blueprint $table) {
+        Schema::create('submajor_measures', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('major_id');
-            $table->string('curriculum_year');
+            $table->foreignId('curriculum_type_id');
+            $table->foreignId('submajor_id');
+            $table->string('type');
             $table->timestamps();
         });
     }
@@ -24,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('curriculums');
+        Schema::dropIfExists('submajor_measures');
     }
 };

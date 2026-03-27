@@ -11,7 +11,7 @@ class CurriculumSubjectController extends Controller
 {
     public function index()
     {
-        $curriculum_subjects = CurriculumSubject::with(['curriculum', 'subject_category'])->get();
+        $curriculum_subjects = CurriculumSubject::with(['curriculum_type', 'subject_category'])->get();
         return view('admin.curriculum_subjects.index', compact('curriculum_subjects'));
     }
 

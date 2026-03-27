@@ -34,8 +34,8 @@
                         @forelse($curriculum_subjects as $curriculum_subject)
                         <tr>
                             <td class="px-4 py-3 align-middle">
-                                {{ $curriculum_subject->curriculum->curriculum_name ?? '-' }}
-                                <br><small class="text-muted">{{ $curriculum_subject->curriculum->program_name ?? '' }} (ปี {{ $curriculum_subject->curriculum->curriculum_year ?? '' }})</small>
+                                {{ $curriculum_subject->curriculum->major->major_name_thai ?? '-' }}
+                                <br><small class="text-muted">ปี {{ $curriculum_subject->curriculum->curriculum_year ?? '' }}</small>
                             </td>
                             <td class="px-4 py-3 align-middle">{{ $curriculum_subject->subject_category->category_name ?? '-' }}</td>
                             <td class="px-4 py-3 text-end align-middle">

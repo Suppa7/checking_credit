@@ -5,13 +5,15 @@ namespace App\Http\Controllers;
 use App\Models\Subject;
 use App\Models\SubjectType;
 use App\Models\SubjectOwn;
+use App\Models\Curriculum;
+use App\Models\SubjectCurriculum;
 use Illuminate\Http\Request;
 
 class SubjectController extends Controller
 {
     public function index()
     {
-        $subjects = Subject::with(['subject_type', 'subject_own.major', 'subject_own.submajor'])->get();
+        $subjects = Subject::with(['subject_type', 'subject_own.major', 'subject_own.submajor', 'curriculums'])->get();
         return view('admin.subjects.index', compact('subjects'));
     }
 
@@ -19,7 +21,8 @@ class SubjectController extends Controller
     {
         $subject_types = SubjectType::all();
         $subject_owns = SubjectOwn::with(['major', 'submajor'])->get();
-        return view('admin.subjects.create', compact('subject_types', 'subject_owns'));
+        $curriculums = Curriculum::all();
+        return view('admin.subjects.create', compact('subject_types', 'subject_owns', 'curriculums'));
     }
 
     public function store(Request $request)
@@ -30,9 +33,20 @@ class SubjectController extends Controller
             'subject_credit' => 'required|string|max:255',
             'subject_type_id' => 'required|exists:subject_types,id',
             'subject_own_id' => 'nullable|exists:subject_owns,id',
+            'curriculum_ids' => 'nullable|array',
+            'curriculum_ids.*' => 'exists:curriculums,id',
         ]);
 
-        Subject::create($request->all());
+        $subject = Subject::create($request->except('curriculum_ids'));
+
+        if ($request->has('curriculum_ids')) {
+            foreach ($request->curriculum_ids as $curriculum_id) {
+                SubjectCurriculum::create([
+                    'subject_id' => $subject->id,
+                    'curriculum_id' => $curriculum_id,
+                ]);
+            }
+        }
 
         return redirect()->route('admin.subjects.index')->with('success', 'เพิ่มข้อมูลรายวิชาสำเร็จ');
     }
@@ -44,9 +58,11 @@ class SubjectController extends Controller
 
     public function edit(Subject $subject)
     {
+        $subject->load('curriculums');
         $subject_types = SubjectType::all();
         $subject_owns = SubjectOwn::with(['major', 'submajor'])->get();
-        return view('admin.subjects.edit', compact('subject', 'subject_types', 'subject_owns'));
+        $curriculums = Curriculum::all();
+        return view('admin.subjects.edit', compact('subject', 'subject_types', 'subject_owns', 'curriculums'));
     }
 
     public function update(Request $request, Subject $subject)
@@ -57,15 +73,30 @@ class SubjectController extends Controller
             'subject_credit' => 'required|string|max:255',
             'subject_type_id' => 'required|exists:subject_types,id',
             'subject_own_id' => 'nullable|exists:subject_owns,id',
+            'curriculum_ids' => 'nullable|array',
+            'curriculum_ids.*' => 'exists:curriculums,id',
         ]);
 
-        $subject->update($request->all());
+        $subject->update($request->except('curriculum_ids'));
+        
+        // Remove old associations and add new ones using SubjectCurriculum model
+        SubjectCurriculum::where('subject_id', $subject->id)->delete();
+        
+        if ($request->has('curriculum_ids')) {
+            foreach ($request->curriculum_ids as $curriculum_id) {
+                SubjectCurriculum::create([
+                    'subject_id' => $subject->id,
+                    'curriculum_id' => $curriculum_id,
+                ]);
+            }
+        }
 
         return redirect()->route('admin.subjects.index')->with('success', 'แก้ไขข้อมูลรายวิชาสำเร็จ');
     }
 
     public function destroy(Subject $subject)
     {
+        $subject->curriculums()->detach();
         $subject->delete();
 
         return redirect()->route('admin.subjects.index')->with('success', 'ลบข้อมูลรายวิชาสำเร็จ');

@@ -63,7 +63,7 @@
                                     <option value="">-- เลือกเล่มหลักสูตร --</option>
                                     @foreach($curriculums as $curriculum)
                                         <option value="{{ $curriculum->id }}" {{ old('curriculum_id', $user->student ? $user->student->curriculum_id : '') == $curriculum->id ? 'selected' : '' }}>
-                                            {{ $curriculum->program_name }} ({{ $curriculum->curriculum_year }})
+                                            {{ $curriculum->major->major_name_thai }} ({{ $curriculum->curriculum_year }})
                                         </option>
                                     @endforeach
                                 </select>

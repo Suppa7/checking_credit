@@ -56,7 +56,7 @@
                                 @endif
                             </td>
                             <td class="px-4 py-3 align-middle text-center">
-                                <div class="fw-bold small">{{ $user->student->curriculum->program_name }} {{ $user->student->curriculum->curriculum_year }}</div>
+                                <div class="fw-bold small">{{ $user->student->curriculum->major->major_name_thai }} {{ $user->student->curriculum->curriculum_year }}</div>
                             </td>
                             <td class="px-4 py-3 align-middle text-center small text-muted">{{ $user->created_at->format('d/m/Y H:i') }}</td>
 

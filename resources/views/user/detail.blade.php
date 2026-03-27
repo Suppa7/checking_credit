@@ -147,13 +147,45 @@
                                     // คำนวณ % สำหรับ Progress Bar
                                     $percent = ($item->credit_needed > 0) ? min(($totalEarned / $item->credit_needed) * 100, 100) : 0;
                                 @endphp
-                                <tr>
+                                <tr class="bg-white">
                                     <td class="text-center text-muted">{{ $loop->iteration }}</td>
                                     <td>
-                                        <div class="fw-bold text-dark">{{ $item->type_name }}</div>
-                                        <div class="progress mt-2" style="width: 150px;">
+                                        <div class="fw-bold text-dark d-flex align-items-center">
+                                            <span class="me-2 text-primary">#</span> {{ $item->type_name }}
+                                            @if($item->type_name == 'วิชาชีพเลือก' && !$isElectiveAllowed)
+                                                <span class="badge bg-warning text-dark ms-2" style="font-size: 0.7rem;">เฉพาะวิชาเอกตนเอง</span>
+                                            @endif
+                                        </div>
+                                        <div class="progress mt-2" style="width: 150px; height: 6px;">
                                             <div class="progress-bar {{ $isComplete ? 'bg-success' : 'bg-warning' }}" 
                                                  role="progressbar" style="width: {{ $percent }}%"></div>
+                                        </div>
+                                        
+                                        {{-- คลี่ดูรายวิชาที่อยู่ในกลุ่มนี้ --}}
+                                        <div class="mt-3">
+                                            <a class="text-decoration-none small text-primary fw-medium" data-bs-toggle="collapse" href="#subjects-{{ $item->id }}" role="button">
+                                                <i class="bi bi-chevron-down me-1"></i> รายวิชาในกลุ่ม ({{ $item->subjects->count() }})
+                                            </a>
+                                            <div class="collapse mt-2" id="subjects-{{ $item->id }}">
+                                                <div class="bg-light p-3 rounded-3 border-0">
+                                                    <ul class="list-unstyled mb-0 small">
+                                                        @foreach($item->subjects as $subject)
+                                                            @php 
+                                                                $isPassed = $myPassed->pluck('subject_id')->contains($subject->id);
+                                                            @endphp
+                                                            <li class="d-flex justify-content-between align-items-center py-1 border-bottom border-secondary border-opacity-10 last-child-border-0">
+                                                                <span class="{{ $isPassed ? 'text-success' : 'text-muted' }}">
+                                                                    <i class="bi {{ $isPassed ? 'bi-check-circle-fill' : 'bi-circle' }} me-2"></i>
+                                                                    <span class="font-monospace fw-bold">{{ $subject->subject_code }}</span> {{ $subject->subject_name }}
+                                                                </span>
+                                                                <span class="badge {{ $isPassed ? 'bg-success' : 'bg-secondary' }} bg-opacity-10 {{ $isPassed ? 'text-success' : 'text-secondary' }} rounded-pill px-2">
+                                                                    {{ $subject->subject_credit }}
+                                                                </span>
+                                                            </li>
+                                                        @endforeach
+                                                    </ul>
+                                                </div>
+                                            </div>
                                         </div>
                                     </td>
                                     <td class="text-center">
