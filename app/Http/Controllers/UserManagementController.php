@@ -14,7 +14,7 @@ class UserManagementController extends Controller
 {
     public function index()
     {
-        $users = User::where('role', 'user')->with(['student.curriculum', 'student.major', 'student.submajor'])->get();
+        $users = User::where('role', 'user')->with(['student.curriculum', 'student.major', 'student.submajor'])->paginate(10);
         return view('admin.user_managements.index', compact('users'));
     }
 
