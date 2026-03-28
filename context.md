@@ -1,24 +1,27 @@
 # Checking System - Project Context
 
 ## Overview
-This is a Laravel 12 application designed as a **"Checking System"** for university students. Its primary purpose is to track students' academic progress by matching registered/passed subjects against their curriculum requirements. The system supports multiple "tracks" or "types" within a single curriculum (e.g., Regular vs. Co-op).
+This is a Laravel 12 application designed as a **"Checking System"** for university students at PSU. Its primary purpose is to track students' academic progress by matching registered/passed subjects against their curriculum requirements. The system supports multiple "tracks" or "types" within a single curriculum (e.g., Regular vs. Co-op), catering to different academic paths.
 
 ## Tech Stack
 - **Framework:** Laravel 12.0
 - **PHP Version:** ^8.2
 - **Frontend/UI:** Laravel UI (Bootstrap), Select2 for enhanced dropdowns, Vite.
+- **Icons:** Bootstrap Icons.
 
 ## Key Entities & Database Structure
 - **User & Roles:** Handles authentication and role assignment (`admin`, `user`).
 - **Student:** Linked to a `User`. Stores relationships to `Curriculum`, `Major`, and `Submajor`.
 - **Subject:** Represents courses with `subject_code`, `subject_name`, and `subject_credit`. Belongs to a `SubjectType` and `SubjectOwn`.
-- **Curriculum:** Defines academic programs. Has many `CurriculumType` and `SubjectCurriculum`.
-- **CurriculumType:** Defines specific tracks within a curriculum (e.g., "Regular track", "Co-op track"). Groups `CurriculumSubject` requirements.
-- **SubjectCurriculum:** Pivot entity mapping `Subject` to `Curriculum`, defining which subjects are available in which curriculum.
-- **CurriculumSubject:** Maps a `CurriculumType` to a `SubjectCategory`, defining the credit requirements for that category in that track.
-- **SubmajorMeasure:** Defines specific credit requirements or "measures" for a `Submajor` within a `CurriculumType`.
+- **Curriculum:** Defines academic programs. Has many `CurriculumType` (tracks) and `SubjectCurriculum` (explicit associations).
+- **CurriculumType:** Defines specific tracks within a curriculum (e.g., "Regular track", "Co-op track").
+- **CurriculumSubject:** Links a `CurriculumType` to a `SubjectCategory`, defining credit requirements for that category in that specific track.
+- **SubjectCategory:** High-level grouping of subjects (e.g., "General Education", "Major Requirements"). Defines `credit_needed`.
+- **SubjectType:** More granular grouping under a category (e.g., "Language", "Science"). Linked to `SubjectCategory`.
+- **SubjectCurriculum:** Pivot table for explicit associations between `Subject` and `Curriculum`.
+- **SubmajorMeasure:** Defines whether a `Submajor` is "allowed" to take any elective or is restricted to subjects owned by their submajor within a `CurriculumType`.
 - **StudentRegist:** Tracks a student's enrollment and completion status (`Pass`, `Fail`) for subjects.
-- **Supporting Entities:** `Major`, `Submajor`, `SubjectCategory`, `SubjectType`, `SubjectOwn`.
+- **Supporting Entities:** `Major`, `Submajor`, and `SubjectOwn` (defines which submajor owns a subject).
 
 ## Main Functionality & Flow
 ### 1. Authentication & Role-Based Routing
@@ -28,17 +31,17 @@ This is a Laravel 12 application designed as a **"Checking System"** for univers
 - Routes are organized into `routes/web.php`, `routes/admin.php`, and `routes/user.php`.
 
 ### 2. User (Student) Features (`UserController`)
-- **Dashboard (`/user/index`):** Displays progress cards for all `CurriculumType` tracks available in the student's curriculum. Shows total credits earned vs. needed and progress percentage.
-- **Track Detail (`/user/detail/{id}`):** Displays breakdown of subjects by category for a selected `CurriculumType`. Allows filtering by `type_name`.
-- **Category Show (`/user/show/{id}/{type_id}`):** Displays passed vs. unpassed subjects for a specific subject type within the context of the student's curriculum.
-- **Registration Management:** Students can manually add subjects they've registered for and update their profile (name, major, submajor).
+- **Dashboard (`/user/index`):** Displays progress cards for all available tracks in the student's curriculum, showing total credits earned vs. needed.
+- **Track Selection:** A modal using **Select2** allows students to choose a specific track (Curriculum Type) to view detailed progress.
+- **Track Detail (`/user/detail/{id}`):** Provides a breakdown by category. Implements **dynamic elective filtering**: if `SubmajorMeasure` is not 'allowed', only subjects owned by the student's submajor are shown and counted for "Major Elective" (วิชาชีพเลือก).
+- **Category Show (`/user/show/{id}/{type_id}`):** Lists passed and unpassed subjects within a category, filtered by the student's curriculum via `SubjectCurriculum`.
+- **Registration Management:** Students can add registered subjects and update their profile.
 
 ### 3. Admin Features
-Admins manage the structural data via RESTful resource controllers:
-- **Curriculum Management:** `CurriculumController` and `CurriculumTypeController` (to manage tracks and submajor measures).
-- **Subject Association:** `CurriculumSubjectController` (linking categories to tracks) and `SubjectController`.
-- **Classification Management:** CRUD for `Majors`, `Submajors`, `SubjectTypes`, `SubjectCategories`, and `SubjectOwns`.
-- **User Management:** Managed via `UserManagementController`.
+Admins manage structure via RESTful controllers:
+- **Curriculum & Track Management:** `CurriculumController`, `CurriculumTypeController`, and `SubmajorMeasureController`.
+- **Subject Association:** Managed explicitly via `SubjectController` and `CurriculumSubjectController`.
+- **Classification Management:** CRUD for `Majors`, `Submajors`, `SubjectTypes`, etc.
 
 ## Progress Tracking Logic
-The system evaluates `StudentRegist` (status='Pass') against `CurriculumSubject` requirements. It groups subjects by `SubjectCategory` (via `SubjectType`) and calculates earned credits, capping them at the `credit_needed` for each category to provide an accurate percentage towards graduation requirements for a specific `CurriculumType`.
+The system evaluates `StudentRegist` (status='Pass') against `CurriculumSubject` requirements. Credits are grouped by `SubjectCategory` and capped at the `credit_needed` for each category. For elective subjects, the logic dynamically checks `SubmajorMeasure` to ensure students only receive credit for subjects permitted for their submajor and track.

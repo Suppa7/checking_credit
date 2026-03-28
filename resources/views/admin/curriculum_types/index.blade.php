@@ -7,78 +7,72 @@
 @endsection
 
 @section('content')
-<div class="container py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>จัดการรูปแบบหลักสูตร (Curriculum Type)</h2>
-        <div>
-            <a href="{{ route('admin.index') }}" class="btn btn-secondary">กลับหน้าหลัก</a>
-            <a href="{{ route('admin.curriculum_types.create') }}" class="btn btn-primary">เพิ่มรูปแบบหลักสูตร</a>
-        </div>
-    </div>
-
-    @if(session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
-    @endif
-
-    <div class="card shadow-sm border-0 rounded-4">
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-hover mb-0">
-                    <thead class="table-light">
-                        <tr>
-                            <th class="px-4 py-3">เล่มหลักสูตร (Curriculum)</th>
-                            <th class="px-4 py-3">แขนงวิชา (Submajor)</th>
-                            <th class="px-4 py-3">ชื่อรูปแบบ (Type Name)</th>
-                            <th class="px-4 py-3">Measure Status</th>
-                            <th class="px-4 py-3 text-end">จัดการ</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($curriculum_types as $type)
-                        <tr>
-                            <td class="px-4 py-3 align-middle">
-                                <strong>{{ $type->curriculum->major->major_name_thai }}</strong><br>
-                                <small class="text-muted">ปีที่ปรับปรุง: {{ $type->curriculum->curriculum_year }}</small>
-                            </td>
-                            <td class="px-4 py-3 align-middle">
-                                @if($type->submajor)
-                                    {{ $type->submajor->submajor_name_thai }}
-                                @else
-                                    <span class="text-muted small">ไม่ได้ระบุ</span>
-                                @endif
-                            </td>
-                            <td class="px-4 py-3 align-middle">{{ $type->type_name }}</td>
-                            <td class="px-4 py-3 align-middle">
-                                @php
-                                    $allowedCount = $type->submajor_measure->where('type', 'allowed')->count();
-                                    $totalCount = $type->submajor_measure->count();
-                                @endphp
-                                @if($totalCount > 0)
-                                    <span class="badge bg-{{ $allowedCount == $totalCount ? 'success' : ($allowedCount > 0 ? 'info' : 'secondary') }} rounded-pill">
-                                        Allowed: {{ $allowedCount }} / {{ $totalCount }}
-                                    </span>
-                                @else
-                                    <span class="badge bg-light text-muted border rounded-pill small">Not Configured</span>
-                                @endif
-                            </td>
-                            <td class="px-4 py-3 text-end">
-                                <a href="{{ route('admin.curriculum_types.edit', $type) }}" class="btn btn-sm btn-outline-warning">แก้ไข</a>
-                                <form action="{{ route('admin.curriculum_types.destroy', $type) }}" method="POST" class="d-inline" onsubmit="return confirm('ยืนยันการลบรูปแบบหลักสูตร?');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-outline-danger">ลบ</button>
-                                </form>
-                            </td>
-                        </tr>
-                        @empty
-                        <tr>
-                            <td colspan="3" class="text-center px-4 py-4 text-muted">ไม่พบข้อมูล</td>
-                        </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+    <div class="container py-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>จัดการรูปแบบในหลักสูตร (Curriculum Type)</h2>
+            <div>
+                <a href="{{ route('admin.index') }}" class="btn btn-secondary">กลับหน้าหลัก</a>
+                <a href="{{ route('admin.curriculum_types.create') }}" class="btn btn-primary">เพิ่มรูปแบบหลักสูตร</a>
             </div>
         </div>
+
+        @if(session('success'))
+            <div class="alert alert-success">{{ session('success') }}</div>
+        @endif
+
+        <div class="card shadow-sm border-0 rounded-4">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr class="text-center">
+                                <th class="px-4 py-3">เล่มหลักสูตร (Curriculum)</th>
+                                <th class="px-4 py-3">วิชาเอก (Submajor)</th>
+                                <th class="px-4 py-3">ชื่อรูปแบบ (Type Name)</th>
+                                <th class="px-4 py-3" style="width:13%">จัดการ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($curriculum_types as $type)
+                                <tr>
+                                    <td class="px-4 py-3 align-middle">
+                                        <strong>{{ $type->curriculum->major->major_name_thai }}</strong><br>
+                                        <small class="text-muted">ปีที่ปรับปรุง:
+                                            {{ $type->curriculum->curriculum_year }}</small>
+                                    </td>
+                                    <td class="px-4 py-3 align-middle">
+                                        @if($type->submajor)
+                                            {{ $type->submajor->submajor_name_thai }}
+                                        @elseif($type->curriculum->major_id == 1)
+                                            <span class="text-muted small">ยังไม่ระบุ</span>
+                                        @else
+                                            <span class="text-muted small">หลักสูตรนี้ไม่มีวิชาเอก</span>
+                                        @endif
+                                    </td>
+                                    <td class="px-4 py-3 align-middle">{{ $type->type_name }}</td>
+                                    <td class="px-4 py-3 text-center">
+                                        <a href="{{ route('admin.curriculum_types.edit', $type) }}"
+                                            class="btn btn-sm btn-outline-warning">แก้ไข</a>
+                                        <form action="{{ route('admin.curriculum_types.destroy', $type) }}" method="POST"
+                                            class="d-inline" onsubmit="return confirm('ยืนยันการลบรูปแบบหลักสูตร?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">ลบ</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="3" class="text-center px-4 py-4 text-muted">ไม่พบข้อมูล</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="m-2">
+            {{ $curriculum_types->links('pagination::bootstrap-5') }}
+        </div>
     </div>
-</div>
 @endsection

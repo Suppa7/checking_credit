@@ -22,7 +22,7 @@
                             <select name="curriculum_id" id="curriculum_id" class="form-select @error('curriculum_id') is-invalid @enderror" required>
                                 <option value="">-- เลือกเล่มหลักสูตร --</option>
                                 @foreach($curriculums as $curriculum)
-                                    <option value="{{ $curriculum->id }}" {{ old('curriculum_id') == $curriculum->id ? 'selected' : '' }}>
+                                    <option value="{{ $curriculum->id }}" data-major-id="{{ $curriculum->major_id }}" {{ old('curriculum_id') == $curriculum->id ? 'selected' : '' }}>
                                         {{ $curriculum->major->major_name_thai }} (ปี {{ $curriculum->curriculum_year }})
                                     </option>
                                 @endforeach
@@ -32,10 +32,10 @@
                             @enderror
                         </div>
 
-                        <div class="mb-3">
-                            <label for="submajor_id" class="form-label">แขนงวิชา (Submajor)</label>
-                            <select name="submajor_id" id="submajor_id" class="form-select @error('submajor_id') is-invalid @enderror" required>
-                                <option value="">-- เลือกแขนงวิชา --</option>
+                        <div id="submajor_container" class="mb-3">
+                            <label for="submajor_id" class="form-label">วิชาเอก (Submajor)</label>
+                            <select name="submajor_id" id="submajor_id" class="form-select @error('submajor_id') is-invalid @enderror">
+                                <option value="">-- เลือกวิชาเอก --</option>
                                 @foreach($majors as $major)
                                     <optgroup label="{{ $major->major_name_thai }}">
                                         @foreach($major->submajors as $submajor)
@@ -53,43 +53,10 @@
 
                         <div class="mb-3">
                             <label for="type_name" class="form-label">ชื่อรูปแบบ (Type Name)</label>
-                            <input type="text" name="type_name" id="type_name" class="form-control @error('type_name') is-invalid @enderror" value="{{ old('type_name') }}" placeholder="เช่น แผน ก แบบ ก2" required>
+                            <input type="text" name="type_name" id="type_name" class="form-control @error('type_name') is-invalid @enderror" value="{{ old('type_name') }}" placeholder="เช่น แบบปกติ แบบสหกิจ" required>
                             @error('type_name')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
-                        </div>
-                        <div class="mb-4">
-                            <label class="form-label fw-bold">การกำหนดสิทธิ์การเรียนข้ามแขนง (Submajor Measure)</label>
-                            <div class="table-responsive border rounded-3">
-                                <table class="table table-sm table-hover mb-0">
-                                    <thead class="table-light text-center">
-                                        <tr>
-                                            <th class="text-start ps-3">Major / Submajor</th>
-                                            <th width="120">Allowed</th>
-                                            <th width="120">Not Allowed</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach($majors as $major)
-                                            <tr class="table-secondary bg-opacity-10">
-                                                <td colspan="3" class="ps-3 fw-bold small text-uppercase text-muted">{{ $major->major_name_thai }}</td>
-                                            </tr>
-                                            @foreach($major->submajors as $submajor)
-                                                <tr>
-                                                    <td class="ps-4 align-middle">{{ $submajor->submajor_name_thai }}</td>
-                                                    <td class="text-center align-middle">
-                                                        <input class="form-check-input" type="radio" name="submajor_measures[{{ $submajor->id }}]" value="allowed" checked>
-                                                    </td>
-                                                    <td class="text-center align-middle">
-                                                        <input class="form-check-input" type="radio" name="submajor_measures[{{ $submajor->id }}]" value="not allowed">
-                                                    </td>
-                                                </tr>
-                                            @endforeach
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-                            <small class="text-muted mt-2 d-block">* 'Allowed' หมายถึงนักศึกษาสามารถเลือกเรียนวิชาโทนอกแขนงของตนเองได้</small>
                         </div>
 
                         <div class="d-flex justify-content-between">
@@ -102,4 +69,28 @@
         </div>
     </div>
 </div>
+@push('scripts')
+<script>
+    $(document).ready(function() {
+        function toggleSubmajor() {
+            const selectedOption = $('#curriculum_id option:selected');
+            const majorId = selectedOption.data('major-id');
+            const submajorContainer = $('#submajor_container');
+            const submajorSelect = $('#submajor_id');
+
+            if (majorId == 1) {
+                submajorContainer.show();
+                submajorSelect.attr('required', 'required');
+            } else {
+                submajorContainer.hide();
+                submajorSelect.removeAttr('required');
+                submajorSelect.val('');
+            }
+        }
+
+        $('#curriculum_id').on('change', toggleSubmajor);
+        toggleSubmajor(); // Initial call
+    });
+</script>
+@endpush
 @endsection

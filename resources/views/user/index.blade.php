@@ -126,7 +126,7 @@
                             <i class="bi bi-bar-chart-steps text-primary me-2"></i>สรุปความคืบหน้าหลักสูตร
                         </h5>
                         <div class="row g-4">
-                            @foreach($curriculumTypes as $type)
+                            @forelse($curriculumTypes as $type)
                             <div class="col-md-6">
                                 <div class="card border-0 shadow-sm rounded-4 h-100" style="background: #f8f9fa; transition: transform 0.2s;">
                                     <div class="card-body p-4">
@@ -163,7 +163,17 @@
                                     </div>
                                 </div>
                             </div>
-                            @endforeach
+                            @empty
+                            <div class="col-12">
+                                <div class="card border-0 shadow-sm rounded-4 p-4 text-center bg-light">
+                                    <div class="mb-3 text-warning">
+                                        <i class="bi bi-exclamation-triangle-fill" style="font-size: 3rem;"></i>
+                                    </div>
+                                    <h5 class="fw-bold text-dark">ไม่พบรูปแบบหลักสูตรที่ตรงกับวิชาเอกของคุณ</h5>
+                                    <p class="text-muted small mb-0">โปรดติดต่อผู้ดูแลระบบเพื่อตรวจสอบข้อมูลหลักสูตรของคุณ</p>
+                                </div>
+                            </div>
+                            @endforelse
                         </div>
                     </div>
 

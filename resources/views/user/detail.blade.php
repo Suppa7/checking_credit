@@ -67,10 +67,31 @@
             <h3 class="fw-bold mb-0">รายละเอียดหน่วยกิต</h3>
             <p class="opacity-75 small">ตรวจสอบความคืบหน้าของรายวิชาตามโครงสร้างหลักสูตร</p>
         </div>
+        @if(!isset($error))
         <a href="{{ route('user.add_subject') }}" class="btn btn-light rounded-pill px-4 shadow-sm fw-bold">
             <i class="bi bi-plus-circle-fill me-2 text-primary"></i>เพิ่มรายวิชา
         </a>
+        @endif
     </div>
+
+    @if(isset($error))
+    <div class="row justify-content-center py-5">
+        <div class="col-md-8">
+            <div class="card glass-card border-0 shadow-lg text-center p-5">
+                <div class="mb-4 text-warning">
+                    <i class="bi bi-exclamation-octagon-fill" style="font-size: 5rem;"></i>
+                </div>
+                <h2 class="fw-bold text-dark mb-3">ไม่พบข้อมูลโครงการหลักสูตร</h2>
+                <p class="text-muted fs-5 mb-5">{{ $error }}</p>
+                <div class="d-flex justify-content-center">
+                    <a href="{{ route('home') }}" class="btn btn-primary btn-lg rounded-pill px-5 shadow-sm fw-bold">
+                        <i class="bi bi-house-door-fill me-2"></i>กลับหน้าหลัก
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    @else
 
     @if(isset($progress))
     <div class="card glass-card mb-4 border-0 shadow-lg">
@@ -155,6 +176,15 @@
                                             @if($item->type_name == 'วิชาชีพเลือก' && !$isElectiveAllowed)
                                                 <span class="badge bg-warning text-dark ms-2" style="font-size: 0.7rem;">เฉพาะวิชาเอกตนเอง</span>
                                             @endif
+                                            @if($item->type_name == 'วิชาโท' && $isNotInfoSys)
+                                                <span class="badge bg-info text-dark ms-2" style="font-size: 0.7rem;">
+                                                    @if($bestMinorSubmajorName)
+                                                        แขนง: {{ $bestMinorSubmajorName }}
+                                                    @else
+                                                        นับเฉพาะแขนงที่หน่วยกิตมากที่สุด
+                                                    @endif
+                                                </span>
+                                            @endif
                                         </div>
                                         <div class="progress mt-2" style="width: 150px; height: 6px;">
                                             <div class="progress-bar {{ $isComplete ? 'bg-success' : 'bg-warning' }}" 
@@ -217,5 +247,6 @@
             </div>
         </div>
     </div>
+    @endif
 </div>
 @endsection
