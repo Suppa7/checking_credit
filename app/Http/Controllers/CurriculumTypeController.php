@@ -14,13 +14,14 @@ class CurriculumTypeController extends Controller
 {
     public function index()
     {
-        $curriculum_types = CurriculumType::with(['curriculum', 'submajor', 'submajor_measure'])->get();
+        $curriculum_types = CurriculumType::with(['curriculum', 'submajor', 'submajor_measure'])->orderBy('curriculum_id')->paginate(10);
+        
         return view('admin.curriculum_types.index', compact('curriculum_types'));
     }
 
     public function create()
     {
-        $curriculums = Curriculum::all();
+        $curriculums = Curriculum::with('major')->get();
         $majors = Major::with('submajors')->get();
         return view('admin.curriculum_types.create', compact('curriculums', 'majors'));
     }
@@ -29,21 +30,21 @@ class CurriculumTypeController extends Controller
     {
         $request->validate([
             'curriculum_id' => 'required|exists:curriculums,id',
-            'submajor_id' => 'required|exists:submajors,id',
+            'submajor_id' => 'nullable|exists:submajors,id',
             'type_name' => 'required|string|max:255',
-            'submajor_measures' => 'required|array',
+            'submajor_measures' => 'nullable|array',
         ]);
 
-        DB::transaction(function() use ($request) {
-            $curriculumType = CurriculumType::create($request->only(['curriculum_id', 'submajor_id', 'type_name']));
+        $curriculum = Curriculum::findOrFail($request->curriculum_id);
+        $submajor_id = $curriculum->major_id == 1 ? $request->submajor_id : null;
 
-            foreach ($request->submajor_measures as $submajor_id => $type) {
-                SubmajorMeasure::create([
-                    'curriculum_type_id' => $curriculumType->id,
-                    'submajor_id' => $submajor_id,
-                    'type' => $type,
-                ]);
-            }
+        DB::transaction(function() use ($request, $submajor_id) {
+            $curriculumType = CurriculumType::create([
+                'curriculum_id' => $request->curriculum_id,
+                'submajor_id' => $submajor_id,
+                'type_name' => $request->type_name,
+            ]);
+
         });
 
         return redirect()->route('admin.curriculum_types.index')->with('success', 'เพิ่มรูปแบบหลักสูตรสำเร็จ');
@@ -51,7 +52,7 @@ class CurriculumTypeController extends Controller
 
     public function edit(CurriculumType $curriculumType)
     {
-        $curriculums = Curriculum::all();
+        $curriculums = Curriculum::with('major')->get();
         $majors = Major::with('submajors')->get();
         $measures = $curriculumType->submajor_measure->pluck('type', 'submajor_id')->toArray();
         return view('admin.curriculum_types.edit', compact('curriculumType', 'curriculums', 'majors', 'measures'));
@@ -61,24 +62,20 @@ class CurriculumTypeController extends Controller
     {
         $request->validate([
             'curriculum_id' => 'required|exists:curriculums,id',
-            'submajor_id' => 'required|exists:submajors,id',
+            'submajor_id' => 'nullable|exists:submajors,id',
             'type_name' => 'required|string|max:255',
-            'submajor_measures' => 'required|array',
+            'submajor_measures' => 'nullable|array',
         ]);
 
-        DB::transaction(function() use ($request, $curriculumType) {
-            $curriculumType->update($request->only(['curriculum_id', 'submajor_id', 'type_name']));
+        $curriculum = Curriculum::findOrFail($request->curriculum_id);
+        $submajor_id = $curriculum->major_id == 1 ? $request->submajor_id : null;
 
-            // Update measures (delete and recreate for simplicity)
-            $curriculumType->submajor_measure()->delete();
-
-            foreach ($request->submajor_measures as $submajor_id => $type) {
-                SubmajorMeasure::create([
-                    'curriculum_type_id' => $curriculumType->id,
-                    'submajor_id' => $submajor_id,
-                    'type' => $type,
-                ]);
-            }
+        DB::transaction(function() use ($request, $curriculumType, $submajor_id) {
+            $curriculumType->update([
+                'curriculum_id' => $request->curriculum_id,
+                'submajor_id' => $submajor_id,
+                'type_name' => $request->type_name,
+            ]);
         });
 
         return redirect()->route('admin.curriculum_types.index')->with('success', 'แก้ไขรูปแบบหลักสูตรสำเร็จ');

@@ -21,6 +21,7 @@ class UserController extends Controller
         
         if ($student && $student->curriculum) {
             $curriculumTypes = $student->curriculum->curriculum_type()
+                ->where('submajor_id', $student->submajor_id)
                 ->with(['curriculum_subject.subject_category'])
                 ->get();
 
@@ -76,17 +77,20 @@ class UserController extends Controller
         $student = Student::where('user_id', $id)->first();
         $curriculum = $student->curriculum;
         
-        $typeName = $request->input('type_name');
+        // Match curriculum_type by the student's submajor
         $curriculumType = $curriculum->curriculum_type()->with([
             'curriculum_subject.subject_category.subject_type.subjects.subject_own',
             'curriculum_subject.subject_category.subject_type.subjects.subject_curriculum'
-        ])->where('type_name', $typeName)->first();
+        ])->where('submajor_id', $student->submajor_id)->first();
         
+        // If not found, return view with error flag
         if (!$curriculumType) {
-            $curriculumType = $curriculum->curriculum_type()->with([
-                'curriculum_subject.subject_category.subject_type.subjects.subject_own',
-                'curriculum_subject.subject_category.subject_type.subjects.subject_curriculum'
-            ])->first();
+            return view('user.detail', [
+                'curriculum_subjects' => collect(),
+                'progress' => null,
+                'student' => $student,
+                'error' => 'ไม่พบข้อมูลโครงการหลักสูตรที่ตรงกับวิชาเอกของคุณ โปรดติดต่อผู้ดูแลระบบ'
+            ]);
         }
 
         // Check SubmajorMeasure for elective filtering
@@ -95,6 +99,31 @@ class UserController extends Controller
             ->first();
         
         $isElectiveAllowed = $measure && $measure->type == 'allowed';
+        
+        // Special logic for Minor Subjects (วิชาโท)
+        // If not "ระบบสารสนเทศ", find the minor submajor with most credits
+        $isNotInfoSys = $student->submajor && $student->submajor->submajor_name_thai != 'ระบบสารสนเทศ';
+        $bestMinorSubmajorId = null;
+
+        if ($isNotInfoSys) {
+            $minorRegistrations = StudentRegist::where('user_id', $id)
+                ->where('status', 'Pass')
+                ->whereHas('subject.subject_type', function ($q) {
+                    $q->where('type_name', 'วิชาโท');
+                })
+                ->with('subject.subject_own')
+                ->get();
+
+            if ($minorRegistrations->isNotEmpty()) {
+                $groupedBySubmajor = $minorRegistrations->groupBy(function($reg) {
+                    return $reg->subject->subject_own ? $reg->subject->subject_own->submajor_id : 'none';
+                });
+
+                $bestMinorSubmajorId = $groupedBySubmajor->sortByDesc(function($group) {
+                    return $group->sum(fn($reg) => $reg->subject->subject_credit);
+                })->keys()->first();
+            }
+        }
 
         // Filter subjects in the curriculum structure if elective is not allowed
         if (!$isElectiveAllowed && $curriculumType) {
@@ -129,8 +158,32 @@ class UserController extends Controller
                     }
                     return true;
                 });
+            }
+
+            // Filter passed registrations for 'วิชาโท' if not IS
+            if ($isNotInfoSys && $bestMinorSubmajorId !== null) {
+                $passedRegistrations = $passedRegistrations->filter(function ($reg) use ($bestMinorSubmajorId) {
+                    if ($reg->subject && $reg->subject->subject_type && $reg->subject->subject_type->type_name == 'วิชาโท') {
+                        $regSubmajorId = $reg->subject->subject_own ? $reg->subject->subject_own->submajor_id : 'none';
+                        return $regSubmajorId == $bestMinorSubmajorId;
+                    }
+                    return true;
+                });
 
                 // Also update the groupedPassedSubjects for the view
+                foreach ($groupedPassedSubjects as $typeId => $registrations) {
+                    $firstReg = $registrations->first();
+                    if ($firstReg && $firstReg->subject && $firstReg->subject->subject_type && $firstReg->subject->subject_type->type_name == 'วิชาโท') {
+                        $groupedPassedSubjects[$typeId] = $registrations->filter(function ($reg) use ($bestMinorSubmajorId) {
+                            $regSubmajorId = $reg->subject->subject_own ? $reg->subject->subject_own->submajor_id : 'none';
+                            return $regSubmajorId == $bestMinorSubmajorId;
+                        });
+                    }
+                }
+            }
+
+            // Also filter 'วิชาชีพเลือก' for groupedPassedSubjects if not allowed
+            if (!$isElectiveAllowed) {
                 foreach ($groupedPassedSubjects as $typeId => $registrations) {
                     $firstReg = $registrations->first();
                     if ($firstReg && $firstReg->subject && $firstReg->subject->subject_type && $firstReg->subject->subject_type->type_name == 'วิชาชีพเลือก') {
@@ -168,7 +221,12 @@ class UserController extends Controller
         
         $curriculum_subjects = $curriculumType ? $curriculumType->curriculum_subject : collect();
         
-        return view('user.detail', compact('groupedPassedSubjects', 'curriculum_subjects', 'progress', 'isElectiveAllowed'));
+        $bestMinorSubmajorName = null;
+        if ($bestMinorSubmajorId && $bestMinorSubmajorId !== 'none') {
+            $bestMinorSubmajorName = Submajor::find($bestMinorSubmajorId)->submajor_name_thai ?? null;
+        }
+
+        return view('user.detail', compact('groupedPassedSubjects', 'curriculum_subjects', 'progress', 'isElectiveAllowed', 'isNotInfoSys', 'bestMinorSubmajorName'));
     }
 
 
