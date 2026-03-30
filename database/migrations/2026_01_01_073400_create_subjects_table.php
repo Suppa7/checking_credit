@@ -16,8 +16,8 @@ return new class extends Migration
             $table->string('subject_code');
             $table->string('subject_name');
             $table->string('subject_credit');
-            $table->foreignId('subject_type_id');
             $table->foreignId('subject_own_id')->nullable();
+            $table->string('type_name');
             $table->timestamps();
         });
     }
