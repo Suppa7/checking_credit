@@ -16,11 +16,53 @@ class CurriculumTpyeSeeder extends Seeder
         $curriculumSubject = [
             [
                 'curriculum_id'=>1,
-                'type_name'=>'แผนปกติ'
+                'type_name'=>'แผนปกติ',
+                'submajor_id'=>1
             ],
             [
                 'curriculum_id'=>1,
-                'type_name'=>'แผนสหกิจศึกษา'
+                'type_name'=>'แผนสหกิจศึกษา',
+                'submajor_id'=>1
+            ],
+            [
+                'curriculum_id'=>1,
+                'type_name'=>'แผนปกติ',
+                'submajor_id'=>4
+            ],
+            [
+                'curriculum_id'=>1,
+                'type_name'=>'แผนสหกิจศึกษา',
+                'submajor_id'=>4
+            ],
+            [
+                'curriculum_id'=>1,
+                'type_name'=>'แผนปกติ',
+                'submajor_id'=>3
+            ],
+            [
+                'curriculum_id'=>1,
+                'type_name'=>'แผนสหกิจศึกษา',
+                'submajor_id'=>3
+            ],
+            [
+                'curriculum_id'=>1,
+                'type_name'=>'แผนปกติ',
+                'submajor_id'=>2
+            ],
+            [
+                'curriculum_id'=>1,
+                'type_name'=>'แผนสหกิจศึกษา',
+                'submajor_id'=>2
+            ],
+            [
+                'curriculum_id'=>1,
+                'type_name'=>'แผนปกติ',
+                'submajor_id'=>6
+            ],
+            [
+                'curriculum_id'=>1,
+                'type_name'=>'แผนสหกิจศึกษา',
+                'submajor_id'=>6
             ],
             [
                 'curriculum_id'=>2,
@@ -61,7 +103,8 @@ class CurriculumTpyeSeeder extends Seeder
             [
                 'curriculum_id'=>5,
                 'type_name'=>"แผนสหกิจศึกษารูปแบบที่ 2"
-            ]
+            ],
+            
         ];
         foreach ($curriculumSubject as $value) {
             CurriculumType::create($value);

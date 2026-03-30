@@ -11,7 +11,7 @@
         <h2>จัดการรายวิชา (Subject)</h2>
         <div>
             <a href="{{ route('admin.index') }}" class="btn btn-secondary">กลับหน้าหลัก</a>
-            <a href="{{ route('admin.subjects.create') }}" class="btn btn-primary">เพิ่มรายวิชา</a>
+            <a href="{{ route('admin.subjects.create', ['page' => $subjects->currentPage()]) }}" class="btn btn-primary">เพิ่มรายวิชา</a>
         </div>
     </div>
 
@@ -25,12 +25,12 @@
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th class="px-4 py-3">รหัสวิชา</th>
-                            <th class="px-4 py-3">ชื่อวิชา</th>
-                            <th class="px-4 py-3">หน่วยกิต</th>
-                            <th class="px-4 py-3">หมวดวิชา</th>
-                            <th class="px-4 py-3">เจ้าของวิชา</th>
-                            <th class="px-4 py-3">หลักสูตร</th>
+                            <th class="px-4 py-3" style="width: 10%;">รหัสวิชา</th>
+                            <th class="px-4 py-3" style="width: 20%;">ชื่อวิชา</th>
+                            <th class="px-4 py-3" style="width: 5%;">หน่วยกิต</th>
+                            <th class="px-4 py-3" style="width: 20%;">หมวดวิชา</th>
+                            <th class="px-4 py-3" style="width: 20%;">เจ้าของวิชา</th>
+                            <th class="px-4 py-3" style="width: 10%;">หลักสูตร</th>
                             <th class="px-4 py-3 text-end">จัดการ</th>
                         </tr>
                     </thead>
@@ -61,7 +61,7 @@
                                 @endif
                             </td>
                             <td class="px-4 py-3 text-end">
-                                <a href="{{ route('admin.subjects.edit', $subject) }}" class="btn btn-sm btn-outline-warning">แก้ไข</a>
+                                <a href="{{ route('admin.subjects.edit', [$subject, 'page' => $subjects->currentPage()]) }}" class="btn btn-sm btn-outline-warning">แก้ไข</a>
                                 <form action="{{ route('admin.subjects.destroy', $subject) }}" method="POST" class="d-inline" onsubmit="return confirm('ยืนยันการลบข้อมูล?');">
                                     @csrf
                                     @method('DELETE')
@@ -78,6 +78,9 @@
                 </table>
             </div>
         </div>
+    </div>
+    <div class="mt-3">
+        {{ $subjects->links('pagination::bootstrap-5') }}
     </div>
 </div>
 @endsection

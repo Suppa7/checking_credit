@@ -23,7 +23,7 @@ class SubjectCategorySeeder extends Seeder
             'credit_needed' => 93,
             ],
             [
-            'category_name' => 'ค. หมวดวิชาเลือกเสร',
+            'category_name' => 'ค. หมวดวิชาเลือกเสรี',
             'credit_needed' => 6,
             ],  
             [

@@ -64,6 +64,11 @@
         border: none;
         color: white;
     }
+    .btn-all-subjects {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        color: white;
+    }
 </style>
 
 <div class="container py-5">
@@ -108,7 +113,7 @@
                             <div class="col-md-6">
                                 <div class="student-info-box">
                                     <div class="info-label">วิชาเอก</div>
-                                    <div class="info-value">{{ Auth::user()->student->major->major_name_thai ?? '-' }}</div>
+                                    <div class="info-value">{{ Auth::user()->student->submajor->submajor_name_thai ?? '-' }}</div>
                                 </div>
                             </div>
                             <div class="col-md-12">
@@ -187,6 +192,10 @@
                         
                         <a href="{{ route('user.add_subject') }}" class="btn btn-add btn-lg menu-btn py-3 text-white">
                             <i class="bi bi-journal-plus me-2"></i> เพิ่มวิชาที่ลงทะเบียน (Add Subject)
+                        </a>
+                        
+                        <a href="{{ route('user.registrations') }}" class="btn btn-all-subjects btn-lg menu-btn py-3 text-white">
+                            <i class="bi bi-journal-text me-2"></i> รายวิชาที่ลงทะเบียนทั้งหมด (All Registered Subjects)
                         </a>
                         
                     </div>

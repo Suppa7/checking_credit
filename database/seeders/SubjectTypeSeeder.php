@@ -61,17 +61,17 @@ class SubjectTypeSeeder extends Seeder
             ],
             [
                 'subject_category_id' => 2,
-                'credit_needed' => 30,
+                'credit_needed' => 33,
                 'type_name' => 'วิชาชีพบังคับ'
             ],
             [
                 'subject_category_id' => 2,
-                'credit_needed' => 9,
+                'credit_needed' => 21,
                 'type_name' => 'วิชาชีพเลือก'
             ],
             [
                 'subject_category_id' => 2,
-                'credit_needed' => 15,
+                'credit_needed' => 0,
                 'type_name' => 'วิชาโท'
             ],
             [
@@ -81,17 +81,17 @@ class SubjectTypeSeeder extends Seeder
             ],
             [
                 'subject_category_id' => 4,
-                'credit_needed' => 39,
+                'credit_needed' => 36,
                 'type_name' => 'วิชาชีพบังคับ'
             ],
             [
                 'subject_category_id' => 4,
-                'credit_needed' => 0,
+                'credit_needed' => 18,
                 'type_name' => 'วิชาชีพเลือก'
             ],
             [
                 'subject_category_id' => 4,
-                'credit_needed' => 15,
+                'credit_needed' => 0,
                 'type_name' => 'วิชาโท'
             ],
         ];

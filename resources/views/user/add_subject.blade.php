@@ -6,6 +6,66 @@
     <li class="breadcrumb-item active" aria-current="page">เพิ่มวิชาที่ลงทะเบียน</li>
 @endsection
 
+@push('styles')
+    <!-- Select2 Bootstrap 5 Theme -->
+    <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
+    <style>
+        /* Modern Premium Select2 Styling */
+        .select2-container--bootstrap-5 .select2-selection {
+            border-radius: 10px !important;
+            border: 1px solid #ced4da !important;
+            min-height: 50px !important;
+            padding: 0.5rem 1rem !important;
+            background-color: #ffffff !important;
+            transition: all 0.3s ease !important;
+        }
+
+        .select2-container--bootstrap-5.select2-container--focus .select2-selection {
+            border-color: #4facfe !important;
+            box-shadow: 0 0 0 0.25rem rgba(79, 172, 254, 0.25) !important;
+        }
+
+        .select2-container--bootstrap-5 .select2-dropdown {
+            border-radius: 15px !important;
+            border: 1px solid #e2e8f0 !important;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important;
+            overflow: hidden !important;
+            margin-top: 5px;
+        }
+
+        .select2-container--bootstrap-5 .select2-results__option--highlighted[aria-selected] {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%) !important;
+            color: #ffffff !important;
+        }
+        
+        .select2-container--bootstrap-5 .select2-selection__rendered {
+            color: #333 !important;
+            line-height: 1.5 !important;
+        }
+    </style>
+@endpush
+
+@push('scripts')
+<script>
+    $(document).ready(function () {
+        $('#subject_id').select2({
+            theme: 'bootstrap-5',
+            width: '100%',
+            placeholder: '-- ค้นหาและเลือกวิชา (เลือกได้หลายวิชา) --',
+            allowClear: true,
+            closeOnSelect: false
+        });
+
+        $('#status').select2({
+            theme: 'bootstrap-5',
+            width: '100%',
+            placeholder: '-- กรุณาเลือกสถานะ --',
+            allowClear: true
+        });
+    });
+</script>
+@endpush
+
 @section('content')
 <style>
     body {
@@ -81,16 +141,15 @@
                         <form action="{{ route('user.store_subject') }}" method="POST">
                             @csrf
                             <div class="mb-3">
-                                <label for="subject_id" class="form-label fw-bold">เลือกวิชา</label>
-                                <select class="form-select @error('subject_id') is-invalid @enderror" id="subject_id"
-                                    name="subject_id" required>
-                                    <option value="" disabled selected>-- กรุณาเลือกวิชา --</option>
+                                <label for="subject_id" class="form-label fw-bold">เลือกวิชา (เลือกได้หลายวิชา)</label>
+                                <select class="form-select @error('subject_ids') is-invalid @enderror" id="subject_id"
+                                    name="subject_ids[]" multiple required>
                                     @foreach($subjects as $subject)
                                         <option value="{{ $subject->id }}">{{ $subject->subject_code }}
                                             {{ $subject->subject_name }} ({{ $subject->subject_credit }} หน่วยกิต)</option>
                                     @endforeach
                                 </select>
-                                @error('subject_id')
+                                @error('subject_ids')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
@@ -99,7 +158,7 @@
                                 <label for="status" class="form-label fw-bold">สถานะ</label>
                                 <select class="form-select @error('status') is-invalid @enderror" id="status" name="status"
                                     required>
-                                    <option value="" disabled selected>-- กรุณาเลือกสถานะ --</option>
+                                    <option value=""></option>
                                     <option value="Pass">Pass (ผ่าน)</option>
                                     <option value="Not Pass">Not Pass (ไม่ผ่าน/ยังเรียนไม่จบ)</option>
                                 </select>
@@ -122,4 +181,4 @@
             </div>
         </div>
     </div>
-@endsection
+@endsection
