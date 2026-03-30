@@ -125,14 +125,21 @@ class UserController extends Controller
             }
         }
 
-        // Filter subjects in the curriculum structure if elective is not allowed
-        if (!$isElectiveAllowed && $curriculumType) {
+        // Filter subjects in the curriculum structure
+        if ($curriculumType) {
             foreach ($curriculumType->curriculum_subject as $cs) {
                 if ($cs->subject_category) {
                     foreach ($cs->subject_category->subject_type as $st) {
-                        if ($st->type_name == 'วิชาชีพเลือก') {
+                        if (!$isElectiveAllowed && $st->type_name == 'วิชาชีพเลือก') {
                             $st->setRelation('subjects', $st->subjects->filter(function($subject) use ($student) {
                                 return $subject->subject_own && $subject->subject_own->submajor_id == $student->submajor_id;
+                            }));
+                        }
+                        if ($st->type_name == 'วิชาชีพบังคับ') {
+                            $st->setRelation('subjects', $st->subjects->filter(function($subject) use ($student) {
+                                return $subject->subject_own 
+                                    && $subject->subject_own->major_id == $student->major_id 
+                                    && $subject->subject_own->submajor_id == $student->submajor_id;
                             }));
                         }
                     }
@@ -182,6 +189,14 @@ class UserController extends Controller
                 }
             }
 
+            // Filter passed registrations for 'วิชาชีพบังคับ'
+            $passedRegistrations = $passedRegistrations->filter(function ($reg) use ($student) {
+                if ($reg->subject && $reg->subject->subject_type && $reg->subject->subject_type->type_name == 'วิชาชีพบังคับ') {
+                    return $reg->subject->subject_own && $reg->subject->subject_own->major_id == $student->major_id && $reg->subject->subject_own->submajor_id == $student->submajor_id;
+                }
+                return true;
+            });
+
             // Also filter 'วิชาชีพเลือก' for groupedPassedSubjects if not allowed
             if (!$isElectiveAllowed) {
                 foreach ($groupedPassedSubjects as $typeId => $registrations) {
@@ -191,6 +206,16 @@ class UserController extends Controller
                             return $reg->subject && $reg->subject->subject_own && $reg->subject->subject_own->submajor_id == $student->submajor_id;
                         });
                     }
+                }
+            }
+
+            // Also filter 'วิชาชีพบังคับ' for groupedPassedSubjects
+            foreach ($groupedPassedSubjects as $typeId => $registrations) {
+                $firstReg = $registrations->first();
+                if ($firstReg && $firstReg->subject && $firstReg->subject->subject_type && $firstReg->subject->subject_type->type_name == 'วิชาชีพบังคับ') {
+                    $groupedPassedSubjects[$typeId] = $registrations->filter(function ($reg) use ($student) {
+                        return $reg->subject && $reg->subject->subject_own && $reg->subject->subject_own->major_id == $student->major_id && $reg->subject->subject_own->submajor_id == $student->submajor_id;
+                    });
                 }
             }
 
@@ -226,7 +251,7 @@ class UserController extends Controller
             $bestMinorSubmajorName = Submajor::find($bestMinorSubmajorId)->submajor_name_thai ?? null;
         }
 
-        return view('user.detail', compact('groupedPassedSubjects', 'curriculum_subjects', 'progress', 'isElectiveAllowed', 'isNotInfoSys', 'bestMinorSubmajorName'));
+        return view('user.detail', compact('groupedPassedSubjects', 'curriculum_subjects', 'progress', 'isElectiveAllowed', 'isNotInfoSys', 'bestMinorSubmajorName', 'student'));
     }
 
 
@@ -234,24 +259,39 @@ class UserController extends Controller
     {
         $student = Student::where('user_id', $id)->first();
         $curriculum_id = $student->curriculum_id;
+        $subjectType = SubjectType::find($type_id);
 
-        $passedSubjects = StudentRegist::query()->with('subject.subject_curriculum')->where('user_id', $id)->where('status', 'Pass')->whereHas('subject', function ($query) use ($type_id, $curriculum_id) {
+        $passedSubjects = StudentRegist::query()->with(['subject.subject_curriculum', 'subject.subject_own'])->where('user_id', $id)->where('status', 'Pass')->whereHas('subject', function ($query) use ($type_id, $curriculum_id, $subjectType, $student) {
             $query->where('subject_type_id', $type_id)
                   ->whereHas('subject_curriculum', function($q) use ($curriculum_id) {
                       $q->where('curriculum_id', $curriculum_id);
                   });
+            if ($subjectType && $subjectType->type_name == 'วิชาชีพบังคับ') {
+                $query->whereHas('subject_own', function($q) use ($student) {
+                    $q->where('major_id', $student->major_id)
+                      ->where('submajor_id', $student->submajor_id);
+                });
+            }
         })->get();
 
         $passSubjectId = $passedSubjects->pluck('subject_id')->toArray();
 
-        $unpassedSubjects = Subject::query()
-            ->with('subject_curriculum')
+        $unpassedQuery = Subject::query()
+            ->with(['subject_curriculum', 'subject_own'])
             ->where('subject_type_id', $type_id)
             ->whereHas('subject_curriculum', function($q) use ($curriculum_id) {
                 $q->where('curriculum_id', $curriculum_id);
             })
-            ->whereNotIn('id', $passSubjectId)
-            ->get();
+            ->whereNotIn('id', $passSubjectId);
+
+        if ($subjectType && $subjectType->type_name == 'วิชาชีพบังคับ') {
+            $unpassedQuery->whereHas('subject_own', function($q) use ($student) {
+                $q->where('major_id', $student->major_id)
+                  ->where('submajor_id', $student->submajor_id);
+            });
+        }
+
+        $unpassedSubjects = $unpassedQuery->get();
 
         return view('user.show', compact('passedSubjects', 'unpassedSubjects'));
     }

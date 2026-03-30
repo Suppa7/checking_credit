@@ -176,12 +176,15 @@
                                             @if($item->type_name == 'วิชาชีพเลือก' && !$isElectiveAllowed)
                                                 <span class="badge bg-warning text-dark ms-2" style="font-size: 0.7rem;">เฉพาะวิชาเอกตนเอง</span>
                                             @endif
+                                            @if($item->type_name == 'วิชาชีพบังคับ')
+                                                <span class="badge bg-primary text-white ms-2" style="font-size: 0.7rem;">เฉพาะวิชาเอกตนเอง</span>
+                                            @endif
                                             @if($item->type_name == 'วิชาโท' && $isNotInfoSys)
                                                 <span class="badge bg-info text-dark ms-2" style="font-size: 0.7rem;">
                                                     @if($bestMinorSubmajorName)
-                                                        แขนง: {{ $bestMinorSubmajorName }}
+                                                        วิชาเอก: {{ $bestMinorSubmajorName }}
                                                     @else
-                                                        นับเฉพาะแขนงที่หน่วยกิตมากที่สุด
+                                                        นับเฉพาะวิชาเอกที่หน่วยกิตมากที่สุด
                                                     @endif
                                                 </span>
                                             @endif
