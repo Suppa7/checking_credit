@@ -37,13 +37,11 @@
                             <select name="submajor_id" id="submajor_id" class="form-select @error('submajor_id') is-invalid @enderror">
                                 <option value="">-- เลือกวิชาเอก --</option>
                                 @foreach($majors as $major)
-                                    <optgroup label="{{ $major->major_name_thai }}">
-                                        @foreach($major->submajors as $submajor)
-                                            <option value="{{ $submajor->id }}" {{ old('submajor_id') == $submajor->id ? 'selected' : '' }}>
-                                                {{ $submajor->submajor_name_thai }}
-                                            </option>
-                                        @endforeach
-                                    </optgroup>
+                                    @foreach($major->submajors as $submajor)
+                                        <option value="{{ $submajor->id }}" {{ old('submajor_id') == $submajor->id ? 'selected' : '' }}>
+                                            {{ $submajor->submajor_name_thai }}
+                                        </option>
+                                    @endforeach
                                 @endforeach
                             </select>
                             @error('submajor_id')
