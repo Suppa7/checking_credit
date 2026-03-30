@@ -14,19 +14,19 @@ class MajorSeeder extends Seeder
     public function run(): void
     {
         $major = [
-            [
+            [ //1
                 'major_id' => '001',
                 'major_name_thai' => 'หลักสูตรบริหารธุรกิจบัณฑิต',
             ],
-            [
+            [ //2
                 'major_id' => '002',
                 'major_name_thai' => 'หลักสูตรบริหารธุรกิจบัณฑิต(หลักสูตรนานาชาติ)',
             ],
-            [
+            [ //3
                 'major_id' => '003',
                 'major_name_thai' => 'หลักสูตรบัญชีบัณฑิต',
             ],
-            [
+            [ //4
                 'major_id' => '004',
                 'major_name_thai' => 'หลักสูตรรัฐประศาสนศาสตรบัณฑิต',
             ],

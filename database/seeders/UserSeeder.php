@@ -27,7 +27,7 @@ class UserSeeder extends Seeder
             'user_id' => $user->id,
             'student_name' => 'สวรรยา แก้วประดิษฐ์',
             'curriculum_id' => 1,
-            'major_id' => 1,
+            'major_id' => 5,
             'submajor_id' => 1,
         ]);
     }

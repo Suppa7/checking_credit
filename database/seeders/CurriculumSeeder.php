@@ -38,6 +38,14 @@ class CurriculumSeeder extends Seeder
                 'major_id' => 3,
                 'curriculum_year' => '2568',
             ],
+            [ //7
+                'major_id' => 4,
+                'curriculum_year' => '2564',
+            ],
+            [ //8
+                'major_id' => 4,
+                'curriculum_year' => '2568',
+            ],
         ];
 
         foreach($curriculum as $item){

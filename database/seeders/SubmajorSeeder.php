@@ -16,27 +16,27 @@ class SubmajorSeeder extends Seeder
         $submajor = [
             [
                 'submajor_id' => '001',
-                'submajor_name_thai' => 'ระบบสารสนเทศทางธุรกิจ',
-                'major_id' => 1
-            ],
-            [
-                'submajor_id' => '002',
                 'submajor_name_thai' => 'การเงินและการลงทุน',
                 'major_id' => 1
             ],
             [
-                'submajor_id' => '003',
-                'submajor_name_thai' => 'การตลาดและการสื่อสาร',
+                'submajor_id' => '002',
+                'submajor_name_thai' => 'การตลาด',
                 'major_id' => 1
             ],
             [
-                'submajor_id' => '004',
+                'submajor_id' => '003',
                 'submajor_name_thai' => 'การจัดการทรัพยากรมนุษย์',
                 'major_id' => 1
             ],
             [
-                'submajor_id' => '005',
+                'submajor_id' => '004',
                 'submajor_name_thai' => 'การจัดการโลจิสติกส์และโซ่อุปทาน',
+                'major_id' => 1
+            ],
+            [
+                'submajor_id' => '005',
+                'submajor_name_thai' => 'ระบบสารสนเทศทางธุรกิจ',
                 'major_id' => 1
             ],
             [
