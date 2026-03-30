@@ -10,13 +10,13 @@ class Subject extends Model
         'subject_code',
         'subject_name',
         'subject_credit',
-        'subject_type_id',
+        'type_name',
         'subject_own_id'
     ];
 
     public function subject_type()
     {
-        return $this->belongsTo(SubjectType::class);
+        return $this->belongsTo(SubjectType::class,'type_name','type_name');
     }
 
     public function subject_own()

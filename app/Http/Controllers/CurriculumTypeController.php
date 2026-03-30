@@ -14,7 +14,7 @@ class CurriculumTypeController extends Controller
 {
     public function index()
     {
-        $curriculum_types = CurriculumType::with(['curriculum', 'submajor', 'submajor_measure'])->orderBy('curriculum_id')->paginate(10);
+        $curriculum_types = CurriculumType::with(['curriculum', 'submajor'])->orderBy('curriculum_id')->paginate(10);
         
         return view('admin.curriculum_types.index', compact('curriculum_types'));
     }
@@ -32,7 +32,6 @@ class CurriculumTypeController extends Controller
             'curriculum_id' => 'required|exists:curriculums,id',
             'submajor_id' => 'nullable|exists:submajors,id',
             'type_name' => 'required|string|max:255',
-            'submajor_measures' => 'nullable|array',
         ]);
 
         $curriculum = Curriculum::findOrFail($request->curriculum_id);
@@ -54,8 +53,7 @@ class CurriculumTypeController extends Controller
     {
         $curriculums = Curriculum::with('major')->get();
         $majors = Major::with('submajors')->get();
-        $measures = $curriculumType->submajor_measure->pluck('type', 'submajor_id')->toArray();
-        return view('admin.curriculum_types.edit', compact('curriculumType', 'curriculums', 'majors', 'measures'));
+        return view('admin.curriculum_types.edit', compact('curriculumType', 'curriculums', 'majors', ));
     }
 
     public function update(Request $request, CurriculumType $curriculumType)
