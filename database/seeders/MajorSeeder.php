@@ -24,7 +24,7 @@ class MajorSeeder extends Seeder
             ],
             [
                 'major_id' => '003',
-                'major_name_thai' => 'หลักสูตรบริหารธุรกิจบัณฑิต',
+                'major_name_thai' => 'หลักสูตรบัญชีบัณฑิต',
             ],
             [
                 'major_id' => '004',

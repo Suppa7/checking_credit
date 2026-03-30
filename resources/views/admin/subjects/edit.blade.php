@@ -18,6 +18,7 @@
                         <form action="{{ route('admin.subjects.update', $subject) }}" method="POST">
                             @csrf
                             @method('PUT')
+                            <input type="hidden" name="page" value="{{ request('page') }}">
                             <div class="mb-3">
                                 <label for="subject_code" class="form-label fw-bold">รหัสวิชา</label>
                                 <input type="text" class="form-control @error('subject_code') is-invalid @enderror"
@@ -47,17 +48,17 @@
                                 @enderror
                             </div>
                             <div class="mb-3">
-                                <label for="subject_type_id" class="form-label fw-bold">หมวดวิชา</label>
-                                <select class="form-select @error('subject_type_id') is-invalid @enderror"
-                                    id="subject_type_id" name="subject_type_id" required>
+                                <label for="type_name" class="form-label fw-bold">หมวดวิชา</label>
+                                <select class="form-select @error('type_name') is-invalid @enderror"
+                                    id="type_name" name="type_name" required>
                                     <option value="" disabled>-- เลือกหมวดวิชา --</option>
-                                    @foreach($subject_types as $type)
-                                        <option value="{{ $type->id }}" {{ old('subject_type_id', $subject->subject_type_id) == $type->id ? 'selected' : '' }}>
-                                            {{ $type->type_name }}
+                                    @foreach($subject_types as $name)
+                                        <option value="{{ $name }}" {{ old('type_name', $subject->type_name) == $name ? 'selected' : '' }}>
+                                            {{ $name }}
                                         </option>
                                     @endforeach
                                 </select>
-                                @error('subject_type_id')
+                                @error('type_name')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
@@ -166,7 +167,7 @@
     <script>
         $(document).ready(function () {
             // Apply Select2 to all relevant dropdowns
-            $('#subject_type_id, #subject_own_id, .select2-curriculum').select2({
+            $('#type_name, #subject_own_id, .select2-curriculum').select2({
                 theme: 'bootstrap-5',
                 width: '100%',
                 placeholder: function() {

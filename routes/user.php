@@ -11,6 +11,7 @@ Route::prefix('user')->middleware(['auth', 'role:user'])->name('user.')->control
     // Add registered subject
     Route::get('add-subject', 'addSubject')->name('add_subject');
     Route::post('store-subject', 'storeSubject')->name('store_subject');
+    Route::get('registrations', 'registrations')->name('registrations'); // Added route
 
     // Edit student info
     Route::get('edit-student', 'editStudent')->name('edit_student');

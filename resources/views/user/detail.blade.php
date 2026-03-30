@@ -162,7 +162,7 @@
 
                             @foreach($items->subject_category->subject_type as $item)
                                 @php
-                                    $myPassed = $groupedPassedSubjects->get($item->id, collect());
+                                    $myPassed = $groupedPassedSubjects->get($item->type_name, collect());
                                     $totalEarned = $myPassed->sum(fn($regist) => $regist->subject->subject_credit);
                                     $isComplete = $totalEarned >= $item->credit_needed;
                                     // คำนวณ % สำหรับ Progress Bar
@@ -173,9 +173,6 @@
                                     <td>
                                         <div class="fw-bold text-dark d-flex align-items-center">
                                             <span class="me-2 text-primary">#</span> {{ $item->type_name }}
-                                            @if($item->type_name == 'วิชาชีพเลือก' && !$isElectiveAllowed)
-                                                <span class="badge bg-warning text-dark ms-2" style="font-size: 0.7rem;">เฉพาะวิชาเอกตนเอง</span>
-                                            @endif
                                             @if($item->type_name == 'วิชาชีพบังคับ')
                                                 <span class="badge bg-primary text-white ms-2" style="font-size: 0.7rem;">เฉพาะวิชาเอกตนเอง</span>
                                             @endif
