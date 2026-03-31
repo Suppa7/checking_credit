@@ -121,7 +121,7 @@
                         <div class="card h-100 shadow-sm border-0 rounded-4 hover-lift">
                             <div class="card-body text-center p-4 d-flex flex-column">
                                 <div class="icon-circle bg-purple bg-opacity-10 text-purple mb-3 mx-auto">
-                                    <span class="fs-1">🏷️</span>
+                                    <span class="fs-1">📖</span>
                                 </div>
                                 <h5 class="card-title fw-bold">กลุ่มวิชา (Category)</h5>
                                 <p class="card-text text-muted flex-grow-1 small">จัดการกลุ่มย่อยของรายวิชา</p>
