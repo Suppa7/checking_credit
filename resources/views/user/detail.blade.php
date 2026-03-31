@@ -173,7 +173,7 @@
                                     <td>
                                         <div class="fw-bold text-dark d-flex align-items-center">
                                             <span class="me-2 text-primary">#</span> {{ $item->type_name }}
-                                            @if($item->type_name == 'วิชาชีพบังคับ')
+                                            @if($item->type_name == 'วิชาชีพบังคับ' || $item->type_name == 'วิชาชีพเลือก')
                                                 <span class="badge bg-primary text-white ms-2" style="font-size: 0.7rem;">เฉพาะวิชาเอกตนเอง</span>
                                             @endif
                                             @if($item->type_name == 'วิชาโท' && $isNotInfoSys)
