@@ -112,6 +112,20 @@ class UserController extends Controller
             ]);
         }
 
+        // Filter subjects within each SubjectType to only include those in this student's curriculum
+        if ($curriculumType) {
+            foreach ($curriculumType->curriculum_subject as $cs) {
+                if ($cs->subject_category) {
+                    foreach ($cs->subject_category->subject_type as $st) {
+                        $filtered = $st->subjects->filter(function ($subject) use ($curriculum_id) {
+                            return $subject->subject_curriculum->contains('curriculum_id', $curriculum_id);
+                        });
+                        $st->setRelation('subjects', $filtered);
+                    }
+                }
+            }
+        }
+
         // Logic for Major Elective (วิชาชีพเลือก) and Required (วิชาชีพบังคับ) filtering
 
         // Special logic for Minor Subjects (วิชาโท)

@@ -31,30 +31,55 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse($curriculum_subjects as $curriculum_subject)
-                                <tr>
+                            @forelse($curriculum_subjects as $type_id => $group)
+                                @php $first = $group->first(); @endphp
+                                <tr class="hover-bg-light">
                                     <td class="px-4 py-3 align-middle">
-                                        {{ $curriculum_subject->curriculum_type->curriculum->major->major_name_thai ?? '-' }}
-                                        <br><small class="text-muted">ปี
-                                            {{ $curriculum_subject->curriculum_type->curriculum->curriculum_year ?? '' }}</small>
+                                        <div class="fw-bold text-primary fs-6">
+                                            {{ $first->curriculum_type->type_name ?? '-' }}
+                                            @if($first->curriculum_type->submajor)
+                                                <span class="text-secondary small">({{ $first->curriculum_type->submajor->submajor_name_thai }})</span>
+                                            @endif
+                                        </div>
+                                        <small class="text-muted">
+                                            {{ $first->curriculum_type->curriculum->major->major_name_thai ?? '-' }} 
+                                            ({{ $first->curriculum_type->curriculum->curriculum_year ?? '' }})
+                                        </small>
                                     </td>
                                     <td class="px-4 py-3 align-middle">
-                                        {{ $curriculum_subject->subject_category->category_name ?? '-' }}
+                                        <div class="d-flex flex-wrap gap-2">
+                                            @foreach($group as $item)
+                                                <span class="badge bg-info text-dark shadow-sm border">
+                                                    <i class="bi bi-tag-fill me-1"></i>
+                                                    {{ $item->subject_category->category_name ?? '-' }}
+                                                </span>
+                                            @endforeach
+                                        </div>
                                     </td>
                                     <td class="px-4 py-3 text-end align-middle">
-                                        <a href="{{ route('admin.curriculum_subjects.edit', $curriculum_subject) }}"
-                                            class="btn btn-sm btn-outline-warning">แก้ไข</a>
-                                        <form action="{{ route('admin.curriculum_subjects.destroy', $curriculum_subject) }}"
-                                            method="POST" class="d-inline" onsubmit="return confirm('ยืนยันการลบข้อมูล?');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-outline-danger">ลบ</button>
-                                        </form>
+                                        <div class="d-flex justify-content-end gap-2">
+                                            <a href="{{ route('admin.curriculum_subjects.edit', $first) }}"
+                                                class="btn btn-sm btn-outline-warning rounded-pill px-3 shadow-sm hover-lift"
+                                                title="แก้ไขทั้งหมดในกลุ่มนี้">
+                                                <i class="bi bi-pencil-square me-1"></i> แก้ไข
+                                            </a>
+                                            <form action="{{ route('admin.curriculum_subjects.destroy', $first) }}"
+                                                method="POST" class="d-inline" onsubmit="return confirm('ยืนยันการลบรายการนี้? (การลบจะลบเฉพาะรายการที่เลือก หากต้องการลบข้อมูลทั้งหมดในกลุ่ม แนะนำให้ลบทีละรายการหรือใช้ฟังก์ชันแก้ไข)');">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-3 shadow-sm hover-lift">
+                                                    <i class="bi bi-trash-fill me-1"></i> ลบ
+                                                </button>
+                                            </form>
+                                        </div>
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="3" class="text-center px-4 py-4 text-muted">ไม่พบข้อมูล</td>
+                                    <td colspan="3" class="text-center px-4 py-5 text-muted">
+                                        <span class="fs-2 mb-3 d-block">📂</span>
+                                        ไม่พบข้อมูลวิชาในหลักสูตร
+                                    </td>
                                 </tr>
                             @endforelse
                         </tbody>

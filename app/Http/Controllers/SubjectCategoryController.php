@@ -9,7 +9,7 @@ class SubjectCategoryController extends Controller
 {
     public function index()
     {
-        $subject_categories = SubjectCategory::all();
+        $subject_categories = SubjectCategory::with('subject_type')->get();
         return view('admin.subject_categories.index', compact('subject_categories'));
     }
 

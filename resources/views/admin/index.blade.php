@@ -81,7 +81,7 @@
                                 <div class="icon-circle bg-danger bg-opacity-10 text-danger mb-3 mx-auto">
                                     <span class="fs-1">📑</span>
                                 </div>
-                                <h5 class="card-title fw-bold">กลุ่มวิชาในแต่ละรูปแบบหลักสูตร</h5>
+                                <h5 class="card-title fw-bold">จัดการกลุ่มวิชาในหลักสูตร <br>(curriculum_subject)</h5>
                                 <p class="card-text text-muted flex-grow-1 small">ผูกกลุ่มวิชาเข้ากับรูปแบบหลักสูตรต่างๆ</p>
                                 <a href="{{ route('admin.curriculum_subjects.index') }}" class="btn btn-outline-danger rounded-pill px-4 mt-2 w-100 fw-semibold">จัดการ</a>
                             </div>

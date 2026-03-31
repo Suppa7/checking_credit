@@ -14,7 +14,8 @@ class SubjectController extends Controller
     public function index()
     {
         $subjects = Subject::with(['subject_type', 'subject_own.major', 'subject_own.submajor', 'curriculums'])->paginate(10);
-        return view('admin.subjects.index', compact('subjects'));
+        $curriculums = Curriculum::with('major')->get();
+        return view('admin.subjects.index', compact('subjects', 'curriculums'));
     }
 
     public function create()
@@ -55,10 +56,6 @@ class SubjectController extends Controller
         return redirect()->route('admin.subjects.index', ['page' => $request->page])->with('success', 'เพิ่มข้อมูลรายวิชาสำเร็จ');
     }
 
-    public function show(Subject $subject)
-    {
-        //
-    }
 
     public function edit(Subject $subject)
     {
@@ -108,5 +105,20 @@ class SubjectController extends Controller
         $subject->delete();
 
         return redirect()->back()->with('success', 'ลบข้อมูลรายวิชาสำเร็จ');
+    }
+
+    /**
+     * Sync curriculums for a subject (quick update from index)
+     */
+    public function syncCurriculums(Request $request, Subject $subject)
+    {
+        $request->validate([
+            'curriculum_ids' => 'nullable|array',
+            'curriculum_ids.*' => 'exists:curriculums,id',
+        ]);
+
+        $subject->curriculums()->sync($request->curriculum_ids ?? []);
+
+        return redirect()->back()->with('success', 'อัปเดตข้อมูลหลักสูตรสำหรับวิชา ' . $subject->subject_code . ' สำเร็จ');
     }
 }

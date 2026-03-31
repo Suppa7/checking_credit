@@ -18,36 +18,41 @@
                     <form action="{{ route('admin.curriculum_subjects.store') }}" method="POST">
                         @csrf
                         <div class="mb-3">
-                            <label for="curriculum_id" class="form-label fw-bold">เล่มหลักสูตร (Curriculum)</label>
-                            <select class="form-select @error('curriculum_id') is-invalid @enderror" id="curriculum_id" name="curriculum_id" required>
-                                <option value="" disabled selected>-- เลือกเล่มหลักสูตร --</option>
-                                @foreach($curriculums as $curriculum)
-                                    <option value="{{ $curriculum->id }}" {{ old('curriculum_id') == $curriculum->id ? 'selected' : '' }}>
-                                        {{ $curriculum->curriculum_name }} ({{ $curriculum->curriculum_year }})
+                            <label for="curriculum_type_id" class="form-label fw-bold">ประเภทหลักสูตร (Curriculum Type)</label>
+                            <select class="form-select @error('curriculum_type_id') is-invalid @enderror" id="curriculum_type_id" name="curriculum_type_id" required>
+                                <option value="" disabled selected>-- เลือกประเภทหลักสูตร --</option>
+                                @foreach($curriculum_types as $type)
+                                    <option value="{{ $type->id }}" {{ old('curriculum_type_id') == $type->id ? 'selected' : '' }}>
+                                        {{ $type->curriculum->major->major_name_thai ?? '-' }} 
+                                        ({{ $type->curriculum->curriculum_year }}) - 
+                                        {{ $type->type_name }}
+                                        @if($type->submajor)
+                                            ({{ $type->submajor->submajor_name_thai }})
+                                        @endif
                                     </option>
                                 @endforeach
                             </select>
-                            @error('curriculum_id')
+                            @error('curriculum_type_id')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
                         <div class="mb-4">
-                            <label for="subject_category_id" class="form-label fw-bold">กลุ่มวิชา (Subject Category)</label>
-                            <select class="form-select @error('subject_category_id') is-invalid @enderror" id="subject_category_id" name="subject_category_id" required>
-                                <option value="" disabled selected>-- เลือกกลุ่มวิชา --</option>
+                            <label for="subject_category_ids" class="form-label fw-bold">กลุ่มวิชา (Subject Categories)</label>
+                            <select class="form-select select2 @error('subject_category_ids') is-invalid @enderror" id="subject_category_ids" name="subject_category_ids[]" multiple required>
                                 @foreach($categories as $category)
-                                    <option value="{{ $category->id }}" {{ old('subject_category_id') == $category->id ? 'selected' : '' }}>
+                                    <option value="{{ $category->id }}" {{ (is_array(old('subject_category_ids')) && in_array($category->id, old('subject_category_ids'))) ? 'selected' : '' }}>
                                         {{ $category->category_name }}
                                     </option>
                                 @endforeach
                             </select>
-                            @error('subject_category_id')
+                            <div class="form-text text-muted small">สามารถเลือกได้มากกว่า 1 กลุ่มวิชา</div>
+                            @error('subject_category_ids')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
                         <div class="d-flex justify-content-end gap-2">
-                            <a href="{{ route('admin.curriculum_subjects.index') }}" class="btn btn-secondary">ยกเลิก</a>
-                            <button type="submit" class="btn btn-primary">บันทึกข้อมูล</button>
+                            <a href="{{ route('admin.curriculum_subjects.index') }}" class="btn btn-secondary rounded-pill px-4">ยกเลิก</a>
+                            <button type="submit" class="btn btn-primary rounded-pill px-4 shadow-sm">บันทึกข้อมูล</button>
                         </div>
                     </form>
                 </div>
@@ -55,4 +60,21 @@
         </div>
     </div>
 </div>
+
+@push('styles')
+    <!-- Select2 Bootstrap 5 Theme -->
+    <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
+@endpush
+@push('scripts')
+<script>
+    $(document).ready(function() {
+        $('.select2').select2({
+            theme: 'bootstrap-5',
+            placeholder: "-- เลือกกลุ่มวิชา --",
+            allowClear: true,
+            width: '100%'
+        });
+    });
+</script>
+@endpush
 @endsection
