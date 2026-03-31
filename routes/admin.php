@@ -18,6 +18,8 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::get('/', [AdminController::class, 'index'])->name('index');
 
     Route::resource('subjects', SubjectController::class);
+    Route::post('subjects/{subject}/curriculums', [SubjectController::class, 'syncCurriculums'])->name('subjects.curriculums.sync');
+
     Route::resource('curriculums', CurriculumController::class);
     Route::resource('majors', MajorController::class);
     Route::resource('submajors', SubmajorController::class);

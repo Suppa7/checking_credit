@@ -49,7 +49,7 @@
                             </div>
                             <div class="mb-3">
                                 <label for="type_name" class="form-label fw-bold">หมวดวิชา</label>
-                                <select class="form-select @error('type_name') is-invalid @enderror"
+                                <select class="form-select select2 @error('type_name') is-invalid @enderror"
                                     id="type_name" name="type_name" required>
                                     <option value="" disabled>-- เลือกหมวดวิชา --</option>
                                     @foreach($subject_types as $name)
@@ -64,7 +64,7 @@
                             </div>
                             <div class="mb-4">
                                 <label for="subject_own_id" class="form-label fw-bold">เจ้าของวิชา (เลือกได้ถ้ามี)</label>
-                                <select class="form-select @error('subject_own_id') is-invalid @enderror"
+                                <select class="form-select select2 @error('subject_own_id') is-invalid @enderror"
                                     id="subject_own_id" name="subject_own_id">
                                     <option value="">-- ส่วนกลาง / ไม่มีเจ้าของพิเศษ --</option>
                                     @foreach($subject_owns as $own)
@@ -82,7 +82,7 @@
                             </div>
                             <div class="mb-4">
                                 <label for="subject_own_id" class="form-label fw-bold">หลักสูตรที่เปิดสอน</label>
-                                <select class="form-select select2-curriculum @error('curriculum_ids') is-invalid @enderror" id="curriculum_id"
+                                <select class="form-select select2 @error('curriculum_ids') is-invalid @enderror" id="curriculum_ids"
                                     name="curriculum_ids[]" multiple>
                                     @php
                                         $curriculum_id = $subject->subject_curriculum->pluck('curriculum_id')->toArray();
@@ -110,80 +110,18 @@
     <!-- Select2 Bootstrap 5 Theme -->
     <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css"
         rel="stylesheet" />
-    <style>
-        /* Modern Premium Select2 Styling */
-        .select2-container--bootstrap-5 .select2-selection {
-            border-radius: 0.75rem !important;
-            border: 1px solid #e2e8f0 !important;
-            min-height: 48px !important;
-            padding: 0.5rem 0.75rem !important;
-            background-color: #ffffff !important;
-            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
-        }
-
-        .select2-container--bootstrap-5.select2-container--focus .select2-selection {
-            border-color: #4f46e5 !important;
-            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1) !important;
-        }
-
-        .select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__choice {
-            background-color: #f1f5f9 !important;
-            color: #1e293b !important;
-            border: 1px solid #e2e8f0 !important;
-            border-radius: 0.5rem !important;
-            padding: 4px 12px !important;
-            font-weight: 500 !important;
-            margin-top: 5px !important;
-            font-size: 0.875rem !important;
-        }
-
-        .select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__choice__remove {
-            color: #64748b !important;
-            margin-right: 8px !important;
-            border: none !important;
-            background: transparent !important;
-        }
-
-        .select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__choice__remove:hover {
-            color: #ef4444 !important;
-        }
-
-        .select2-container--bootstrap-5 .select2-results__option--highlighted[aria-selected] {
-            background-color: #4f46e5 !important;
-            color: #ffffff !important;
-        }
-
-        .select2-container--bootstrap-5 .select2-dropdown {
-            border-radius: 0.75rem !important;
-            border: 1px solid #e2e8f0 !important;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important;
-            overflow: hidden !important;
-        }
-    </style>
 @endpush
 
 @push('scripts')
     <script>
         $(document).ready(function () {
-            // Apply Select2 to all relevant dropdowns
-            $('#type_name, #subject_own_id, .select2-curriculum').select2({
-                theme: 'bootstrap-5',
-                width: '100%',
-                placeholder: function() {
-                    return $(this).attr('placeholder') || $(this).attr('title') || '-- เลือก --';
-                },
-                allowClear: true
-            });
-
-            // Specific multi-select config for curriculum
-            $('.select2-curriculum').select2({
-                theme: 'bootstrap-5',
-                placeholder: '-- ค้นหาและเลือกหลักสูตร --',
-                allowClear: true,
-                closeOnSelect: false,
-                width: '100%'
-            });
+        $('.select2').select2({
+            theme: 'bootstrap-5',
+            placeholder: "-- ค้นหาและเลือก --",
+            allowClear: true,
+            width: '100%',
+            closeOnSelect: false
+        });
         });
     </script>
 @endpush
