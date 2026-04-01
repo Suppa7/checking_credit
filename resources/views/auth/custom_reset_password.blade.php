@@ -31,43 +31,37 @@
                 <div class="card-body p-5">
                     <div class="text-center mb-5">
                         <div class="bg-primary d-inline-block p-3 rounded-circle mb-3 shadow">
-                             <i class="bi bi-person-plus-fill text-white fs-3"></i>
+                             <i class="bi bi-key-fill text-white fs-3"></i>
                         </div>
-                        <h2 class="fw-black text-dark m-0">{{ __('Create Account') }}</h2>
-                        <p class="text-muted">สมัครสมาชิกเพื่อเริ่มต้นใช้งานระบบ</p>
+                        <h2 class="fw-black text-dark m-0">Reset Password</h2>
+                        <p class="text-muted">เปลี่ยนรหัสผ่านโดยยืนยันชื่อและรหัสนักศึกษา</p>
                     </div>
 
-                    <form method="POST" action="{{ route('register') }}">
+                    <form method="POST" action="{{ route('custom.password.verify') }}">
                         @csrf
                         
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control border-0 bg-light @error('student_id') is-invalid @enderror" id="student_id" name="student_id" placeholder="65000000" value="{{ old('student_id') }}" required>
+                            <input type="text" class="form-control border-0 bg-light @error('student_id') is-invalid @enderror" id="student_id" name="student_id" placeholder="รหัสนักศึกษา" value="{{ old('student_id') }}" required>
                             <label for="student_id">Student ID</label>
                             @error('student_id')
                                 <span class="invalid-feedback"><strong>{{ $message }}</strong></span>
                             @enderror
                         </div>
 
-                        <div class="form-floating mb-3">
-                            <input type="password" class="form-control border-0 bg-light @error('password') is-invalid @enderror" id="password" name="password" placeholder="Password" required>
-                            <label for="password">{{ __('Password') }}</label>
-                            @error('password')
+                        <div class="form-floating mb-4">
+                            <input type="text" class="form-control border-0 bg-light @error('student_name') is-invalid @enderror" id="student_name" name="student_name" placeholder="ชื่อ-นามสกุล" value="{{ old('student_name') }}" required>
+                            <label for="student_name">Student Name (ชื่อ-นามสกุล)</label>
+                            @error('student_name')
                                 <span class="invalid-feedback"><strong>{{ $message }}</strong></span>
                             @enderror
                         </div>
 
-                        <div class="form-floating mb-4">
-                            <input type="password" class="form-control border-0 bg-light" id="password-confirm" name="password_confirmation" placeholder="Confirm Password" required>
-                            <label for="password-confirm">{{ __('Confirm Password') }}</label>
-                        </div>
-
                         <button type="submit" class="btn btn-gradient btn-lg w-100 rounded-pill shadow-sm mb-3">
-                            {{ __('Register Now') }}
+                            {{ __('ตรวจสอบ') }}
                         </button>
 
                         <div class="text-center mt-3">
-                            <span class="text-muted small">มีบัญชีอยู่แล้ว?</span>
-                            <a href="{{ route('login') }}" class="text-primary small fw-bold text-decoration-none">เข้าสู่ระบบ</a>
+                            <a href="{{ route('login') }}" class="text-primary small fw-bold text-decoration-none"><i class="bi bi-arrow-left"></i> กลับไปหน้าเข้าสู่ระบบ</a>
                         </div>
                     </form>
                 </div>

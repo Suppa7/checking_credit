@@ -39,6 +39,13 @@
 
                     <form method="POST" action="{{ route('login') }}">
                         @csrf
+                        
+                        @if (session('status'))
+                            <div class="alert alert-success fs-6 rounded-3 mb-4" role="alert">
+                                <i class="bi bi-check-circle-fill me-2"></i> {{ session('status') }}
+                            </div>
+                        @endif
+
                         <div class="form-floating mb-3">
                             <input type="text" class="form-control border-0 bg-light @error('student_id') is-invalid @enderror" id="student_id" name="student_id" placeholder="65000000" value="{{ old('student_id') }}" required>
                             <label for="student_id">Student ID</label>
@@ -60,7 +67,7 @@
                                 <input class="form-check-input" type="checkbox" id="remember" name="remember">
                                 <label class="form-check-label small" for="remember">จดจำฉันไว้</label>
                             </div>
-                            <a href="{{ route('password.request') }}" class="small text-decoration-none">ลืมรหัสผ่าน?</a>
+                            <a href="{{ route('custom.password.request') }}" class="small text-decoration-none">ลืมรหัสผ่าน?</a>
                         </div>
 
                         <button type="submit" class="btn btn-gradient btn-lg w-100 rounded-pill shadow-sm">

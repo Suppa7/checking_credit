@@ -13,6 +13,11 @@ Auth::routes();
 
 Route::get('/login', [LoginController::class, 'redirectTo'])->name('login');
 
+Route::get('/forgot-password', [App\Http\Controllers\Auth\CustomResetPasswordController::class, 'showResetForm'])->name('custom.password.request');
+Route::post('/forgot-password/verify', [App\Http\Controllers\Auth\CustomResetPasswordController::class, 'verifyStudent'])->name('custom.password.verify');
+Route::get('/forgot-password/reset', [App\Http\Controllers\Auth\CustomResetPasswordController::class, 'showNewPasswordForm'])->name('custom.password.reset_form');
+Route::post('/forgot-password/reset', [App\Http\Controllers\Auth\CustomResetPasswordController::class, 'reset'])->name('custom.password.update');
+
 Route::get('/home', function () {
     $user = Auth::user()->role;
 
