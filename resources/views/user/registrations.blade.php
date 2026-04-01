@@ -83,7 +83,8 @@
                             <th>รหัสวิชา</th>
                             <th>ชื่อรายวิชา</th>
                             <th>หน่วยกิต</th>
-                            <th class="rounded-end">สถานะ</th>
+                            <th>สถานะ</th>
+                            <th class="rounded-end">จัดการ</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -110,10 +111,20 @@
                                     @endif
                                 </span>
                             </td>
+                            <td>
+                                <form action="{{ route('user.destroy_subject', $regist->id) }}" method="POST" class="d-inline delete-form">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="button" class="btn btn-outline-danger btn-sm rounded-pill px-3 btn-delete"
+                                            data-subject="{{ $regist->subject->subject_code }} {{ $regist->subject->subject_name }}">
+                                        <i class="bi bi-trash3-fill me-1"></i>ลบ
+                                    </button>
+                                </form>
+                            </td>
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="5" class="text-center py-5 text-muted italic">
+                            <td colspan="6" class="text-center py-5 text-muted italic">
                                 <i class="bi bi-inbox-fill d-block mb-3" style="font-size: 3rem; opacity: 0.2;"></i>
                                 ไม่พบข้อมูลการลงทะเบียนวิชา
                             </td>
@@ -125,4 +136,16 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.querySelectorAll('.btn-delete').forEach(button => {
+        button.addEventListener('click', function() {
+            const subjectName = this.dataset.subject;
+            const form = this.closest('.delete-form');
+            if (confirm('คุณต้องการลบวิชา "' + subjectName + '" ออกจากรายการลงทะเบียนหรือไม่?')) {
+                form.submit();
+            }
+        });
+    });
+</script>
 @endsection

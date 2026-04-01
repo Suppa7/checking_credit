@@ -350,7 +350,9 @@ class UserController extends Controller
             'type_name' => $curriculumType ? $curriculumType->type_name : 'N/A'
         ];
 
-        $curriculum_subjects = $curriculumType ? $curriculumType->curriculum_subject : collect();
+        $curriculum_subjects = $curriculumType
+            ? $curriculumType->curriculum_subject->sortBy(fn($cs) => $cs->subject_category->category_name ?? '')
+            : collect();
 
         $bestMinorSubmajorName = null;
         if ($bestMinorSubmajorId && $bestMinorSubmajorId !== 'none') {
@@ -518,5 +520,16 @@ class UserController extends Controller
         }
 
         return redirect()->route('user.index')->with('success', 'เพิ่มวิชาเรียบร้อยแล้ว');
+    }
+
+    public function destroySubject($id)
+    {
+        $registration = StudentRegist::where('id', $id)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
+
+        $registration->delete();
+
+        return redirect()->route('user.registrations')->with('success', 'ลบรายวิชาเรียบร้อยแล้ว');
     }
 }
